@@ -1,19 +1,53 @@
 syntax = "proto3";
 
-package nmq_server;
+package proto;
 
-// The greeting service definition.
-service Greeter {
-    // Sends a greeting
-    rpc SayHello (HelloRequest) returns (HelloReply) {}
+service Api {
+    rpc InitConnection(InitRequest) returns (InitResponse) {}
+    rpc SendMessage(SendMessageRequest) returns (SendMesssageResponse) {}
 }
-  
-// The request message containing the user's name.
-message HelloRequest {
-    string name = 1;
+
+message Header {
+    string key = 1;
+    string value = 2;
 }
-  
-// The response message containing the greetings
-message HelloReply {
-    string message = 1;
+
+message InitRequest{
+    repeated Header headers = 1;
+    InitRequestPayload payload = 2;
+}
+
+message InitRequestPayload {
+    string instanceId = 1;
+    string groupId = 2;
+}
+
+message InitResponse {
+    repeated Header headers = 1;
+    InitResponsePayload payload = 2;
+}
+
+message InitResponsePayload {
+    int64 partition = 1;
+}
+
+message SendMessageRequest {
+    repeated Header headers = 1;
+    SendMessageRequestPayload payload = 2;
+}
+
+message SendMessageRequestPayload {
+    string topic = 1;
+    string key = 2;
+    bytes value  = 3;
+}
+
+message SendMesssageResponse {
+    repeated Header headers = 1;
+    SendMesssageResponsePayload payload = 2;
+}
+
+message SendMesssageResponsePayload {
+    uint64 partition = 1;
+    uint64 offset = 2;
 }
