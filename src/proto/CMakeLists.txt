@@ -1,5 +1,3 @@
-cmake_minimum_required (VERSION 3.20)
-
 project (proto)
 
 find_package(Protobuf REQUIRED)
@@ -18,5 +16,4 @@ protobuf_generate(TARGET proto LANGUAGE grpc GENERATE_EXTENSIONS .grpc.pb.h .grp
 
 target_link_libraries(proto ${Protobuf_LIBRARIES})
 
-target_compile_features(proto PUBLIC cxx_std_11)
 target_include_directories(proto PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
