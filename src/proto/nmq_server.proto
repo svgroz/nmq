@@ -3,8 +3,8 @@ syntax = "proto3";
 package proto;
 
 service Api {
-    rpc InitConnection(InitRequest) returns (InitResponse) {}
-    rpc SendMessage(SendMessageRequest) returns (SendMesssageResponse) {}
+    rpc Send(SendRequest) returns (SendResponse) {}
+    rpc Poll(PollRequest) returns (PollResponse) {}
 }
 
 message Header {
@@ -12,42 +12,32 @@ message Header {
     string value = 2;
 }
 
-message InitRequest{
-    repeated Header headers = 1;
-    InitRequestPayload payload = 2;
+message Message {
+    bytes key = 1;
+    bytes value = 2;
 }
 
-message InitRequestPayload {
-    string instanceId = 1;
+message SendRequest {
+    repeated Header headers = 1;
+    string topic = 2;
+    Message message = 3;
+}
+
+message SendResponse {
+    repeated Header headers = 1;
+    uint64 partition = 2;
+    uint64 offset = 3;
+}
+
+message PollRequest {
+    repeated Header headers = 1;
     string groupId = 2;
+    string clientId = 3;
+    string topic = 4;
+    uint64 maxCount = 5;
 }
 
-message InitResponse {
+message PollResponse {
     repeated Header headers = 1;
-    InitResponsePayload payload = 2;
-}
-
-message InitResponsePayload {
-    int64 partition = 1;
-}
-
-message SendMessageRequest {
-    repeated Header headers = 1;
-    SendMessageRequestPayload payload = 2;
-}
-
-message SendMessageRequestPayload {
-    string topic = 1;
-    string key = 2;
-    bytes value  = 3;
-}
-
-message SendMesssageResponse {
-    repeated Header headers = 1;
-    SendMesssageResponsePayload payload = 2;
-}
-
-message SendMesssageResponsePayload {
-    uint64 partition = 1;
-    uint64 offset = 2;
+    repeated Message messages = 2;
 }

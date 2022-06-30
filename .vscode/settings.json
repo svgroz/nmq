@@ -3,6 +3,7 @@
         "iostream": "cpp"
     },
     "cmake.configureArgs": [
-        "-DOPENSSL_ROOT_DIR=/usr/local/opt/openssl"
+        "-DOPENSSL_ROOT_DIR=/usr/local/opt/openssl",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=1"
     ]
 }
