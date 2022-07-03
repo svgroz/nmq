@@ -10,24 +10,46 @@
 
 #include <boost/log/trivial.hpp>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <vector>
 
-nmq::Topic::Topic(const std::string name, const uint64_t partitions) {
+nmq::FileLock::FileLock(std::string filename) : _filename(filename) {
+  _file =
+      std::ifstream(_filename, std::ifstream::in | std::ifstream::out |
+                                   std::ifstream::app | std::ifstream::binary);
+  if (_file.is_open()) {
+    BOOST_LOG_TRIVIAL(debug) << "file is open: " << _filename;
+  } else {
+    BOOST_LOG_TRIVIAL(error) << "could not open file: " << _filename;
+    throw "TODO"; // TODO
+  }
+};
+
+nmq::FileLock::~FileLock() {
+  _mutex.lock();
+  if (_file.is_open()) {
+    BOOST_LOG_TRIVIAL(debug) << "trying to close file: " << _filename;
+    _file.close();
+    if (_file.is_open()) {
+      BOOST_LOG_TRIVIAL(debug) << "could not close file: " << _filename;
+    } else {
+      BOOST_LOG_TRIVIAL(debug) << "file successfully closed: " << _filename;
+    }
+  } else {
+    BOOST_LOG_TRIVIAL(warning) << "file is already closed: " << _filename;
+  }
+  _file.close();
+  _mutex.unlock();
+}
+
+nmq::Topic::Topic(const std::string name, const uint64_t partitions)
+    : _topics_lock_file(
+          std::vector<std::unique_ptr<nmq::FileLock>>(partitions)) {
   for (uint64_t i = 0; i < partitions; i++) {
     auto partition_filename = name + "_" + std::to_string(partitions);
-
-    auto _topic_file = std::make_unique<std::ifstream>(
-        partition_filename, std::ifstream::in | std::ifstream::out |
-                                std::ifstream::app | std::ifstream::binary);
-
-    if (_topic_file->is_open()) {
-      BOOST_LOG_TRIVIAL(debug) << "file " << partition_filename << " is opened";
-    } else {
-      BOOST_LOG_TRIVIAL(error) << "could not open file: " << partition_filename;
-      throw "TODO"; // TODO
-    }
-
-    this->_topic_files.push_back(std::move(_topic_file));
+    _topics_lock_file.push_back(
+        std::make_unique<nmq::FileLock>(partition_filename));
   }
 };
 
