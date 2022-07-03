@@ -1,5 +1,4 @@
-#ifndef SERVICE_IMPL_H
-#define SERVICE_IMPL_H
+#pragma once
 
 #include <grpcpp/support/status.h>
 
@@ -7,7 +6,7 @@
 
 namespace nmq {
 class ServiceImpl final : public proto::Api::Service {
- public:
+public:
   ServiceImpl();
   virtual ~ServiceImpl();
   virtual ::grpc::Status Send(::grpc::ServerContext *context,
@@ -17,6 +16,4 @@ class ServiceImpl final : public proto::Api::Service {
                               const ::proto::PollRequest *request,
                               ::proto::PollResponse *response);
 };
-}  // namespace nmq
-
-#endif
+} // namespace nmq
