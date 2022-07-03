@@ -7,13 +7,13 @@
 #include <vector>
 
 namespace nmq {
-class FileLock {
+class Partition {
 private:
-  FileLock(const FileLock &) = delete;
+  Partition(const Partition &) = delete;
 
 public:
-  FileLock(std::string filename);
-  virtual ~FileLock();
+  Partition(std::string filename);
+  virtual ~Partition();
   const std::string _filename;
   std::ifstream _file;
   std::mutex _mutex;
@@ -22,7 +22,7 @@ public:
 class Topic {
 private:
   Topic(const Topic &) = delete;
-  std::vector<std::unique_ptr<FileLock>> _topics_lock_file;
+  std::vector<std::unique_ptr<Partition>> partitions;
 
 public:
   Topic(std::string name, uint64_t partitions);

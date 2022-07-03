@@ -7,6 +7,7 @@
 
 #include "configuration.h"
 #include "nmq_server.grpc.pb.h"
+#include "nmq_server.pb.h"
 #include "topic.h"
 
 int main(int argc, char **argv) {
@@ -19,8 +20,9 @@ int main(int argc, char **argv) {
   std::vector<std::unique_ptr<nmq::Topic>> topics;
 
   for (auto topic_configuration : topic_configurations) {
-    topics.push_back(std::make_unique<nmq::Topic>(
-        "/tmp/" + topic_configuration.name(), topic_configuration.partitions()));
+    topics.push_back(
+        std::make_unique<nmq::Topic>("/tmp/" + topic_configuration.name(),
+                                     topic_configuration.partitions()));
   }
 
   BOOST_LOG_TRIVIAL(info) << "nmq started";

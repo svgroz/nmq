@@ -8,8 +8,8 @@ service Api {
 }
 
 message Header {
-    string key = 1;
-    string value = 2;
+    bytes key = 1;
+    bytes value = 2;
 }
 
 message Message {
@@ -31,8 +31,8 @@ message SendResponse {
 
 message PollRequest {
     repeated Header headers = 1;
-    string groupId = 2;
-    string clientId = 3;
+    bytes groupId = 2;
+    bytes clientId = 3;
     string topic = 4;
     uint64 maxCount = 5;
 }
