@@ -14,5 +14,5 @@ else()
     add_compile_options(-Wall -Wextra -pedantic -Werror)
 endif()
 
-add_subdirectory(src/app)
-add_subdirectory(src/proto)
+add_subdirectory(app)
+add_subdirectory(proto)
