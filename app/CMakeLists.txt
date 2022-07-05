@@ -14,7 +14,7 @@ add_executable(app
                 partition.h partition.cpp
                 service_impl.h service_impl.cpp
                 topic.h topic.cpp
-                utils.h utils.cpp
+                utils.h
 )
 target_link_libraries(
     app 
