@@ -14,16 +14,16 @@ int main(int argc, char **argv) {
   (void)argc;
   (void)argv;
 
-  nmq::Configuration conf;
+  nmq::Partition p("/tmp/test-partition");
 
-  std::vector<nmq::TopicConfiguration> topic_configurations = conf.topics();
-  std::vector<std::unique_ptr<nmq::Topic>> topics;
+  proto::Message message1;
+  message1.set_key("v1");
 
-  for (auto topic_configuration : topic_configurations) {
-    topics.push_back(
-        std::make_unique<nmq::Topic>("/tmp/" + topic_configuration.name(),
-                                     topic_configuration.partitions()));
-  }
+  proto::Message message2;
+  message2.set_key("v2");
+
+  p.add(message1);
+  p.add(message2);
 
   BOOST_LOG_TRIVIAL(info) << "nmq started";
 

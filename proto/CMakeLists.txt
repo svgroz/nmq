@@ -1,6 +1,6 @@
 project (proto)
 
-find_package(Protobuf REQUIRED)
+find_package(Protobuf 3.15 REQUIRED)
 find_package(gRPC REQUIRED)
 find_package(Threads REQUIRED)
 

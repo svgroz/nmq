@@ -8,5 +8,6 @@
   (void)context;
   (void)request;
   (void)response;
+
   return ::grpc::Status();
 };

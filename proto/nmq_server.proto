@@ -13,20 +13,19 @@ message Header {
 }
 
 message Message {
-    bytes key = 1;
-    bytes value = 2;
+    repeated Header headers = 1;
+    optional bytes key = 2;
+    bytes value = 3;
 }
 
 message SendRequest {
-    repeated Header headers = 1;
-    string topic = 2;
-    Message message = 3;
+    string topic = 1;
+    Message message = 2;
 }
 
 message SendResponse {
-    repeated Header headers = 1;
-    uint64 partition = 2;
-    uint64 offset = 3;
+    uint64 partition = 1;
+    uint64 offset = 2;
 }
 
 message PollRequest {
@@ -38,6 +37,5 @@ message PollRequest {
 }
 
 message PollResponse {
-    repeated Header headers = 1;
-    repeated Message messages = 2;
+    repeated Message messages = 1;
 }
