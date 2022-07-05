@@ -8,13 +8,7 @@ nmq::Partition::Partition(std::string filename)
   _message_log = std::fstream(_message_log_filename,
                               std::fstream::in | std::fstream::out |
                                   std::fstream::app | std::fstream::binary);
-  if (_message_log.is_open()) {
-    BOOST_LOG_TRIVIAL(debug) << "file is open: " << _message_log_filename;
-  } else {
-    BOOST_LOG_TRIVIAL(error)
-        << "could not open file: " << _message_log_filename;
-    throw "TODO"; // TODO
-  }
+  nmq::file_is_open_check(_message_log, _message_log_filename);
 };
 
 nmq::Partition::~Partition() {

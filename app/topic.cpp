@@ -17,14 +17,8 @@ nmq::Topic::Topic(const std::string name, const uint64_t partitions)
   _partition_offset_log.open(_partition_offset_log_filename,
                              std::fstream::in | std::fstream::out |
                                  std::fstream::app | std::fstream::binary);
-  if (_partition_offset_log.is_open()) {
-    BOOST_LOG_TRIVIAL(debug)
-        << "file is open: " << _partition_offset_log_filename;
-  } else {
-    BOOST_LOG_TRIVIAL(error)
-        << "could not open file: " << _partition_offset_log_filename;
-    throw "TODO"; // TODO
-  }
+  nmq::file_is_open_check(_partition_offset_log,
+                          _partition_offset_log_filename);
 
   _partition_offset_log.seekg(0, _partition_offset_log.end);
 };
