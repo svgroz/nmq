@@ -3,9 +3,9 @@
 #include <fstream>
 #include <memory>
 #include <mutex>
+#include <random>
 #include <string>
 #include <vector>
-#include <random>
 
 #include <nmq_server.pb.h>
 
@@ -19,9 +19,9 @@ typedef struct {
 class Partition {
 private:
   Partition(const Partition &) = delete;
-  const std::string _filename;
-  std::fstream _file;
-  std::mutex _mutex;
+  const std::string _message_log_filename;
+  std::fstream _message_log;
+  std::mutex _message_log_mutex;
 
 public:
   Partition(std::string filename);
@@ -35,6 +35,9 @@ private:
   std::default_random_engine _random_engine;
   std::uniform_int_distribution<uint64_t> _distribution;
   std::vector<std::unique_ptr<Partition>> _partitions;
+  const std::string _partition_offset_log_filename;
+  std::fstream _partition_offset_log;
+  std::mutex _partition_offset_log_mutex;
 
 public:
   Topic(std::string name, uint64_t partitions);

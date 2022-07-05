@@ -3,6 +3,7 @@
 #include <boost/log/trivial.hpp>
 #include <iostream>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "configuration.h"
@@ -14,16 +15,13 @@ int main(int argc, char **argv) {
   (void)argc;
   (void)argv;
 
-  nmq::Partition p("/tmp/test-partition");
+  nmq::Topic topic("/tmp/foo", 2);
 
-  proto::Message message1;
-  message1.set_key("v1");
-
-  proto::Message message2;
-  message2.set_key("v2");
-
-  p.add(message1);
-  p.add(message2);
+  for (int i = 0; i < 30; i++) {
+    proto::Message message;
+    message.set_key("message-" + std::to_string(i));
+    topic.add(message);
+  }
 
   BOOST_LOG_TRIVIAL(info) << "nmq started";
 
