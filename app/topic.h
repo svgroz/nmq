@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#include "partition.h"
 #include <nmq_server.pb.h>
 
 namespace nmq {
@@ -15,19 +16,6 @@ typedef struct {
   uint64_t partiton;
   uint64_t offset;
 } PartitionOffset;
-
-class Partition {
-private:
-  Partition(const Partition &) = delete;
-  const std::string _message_log_filename;
-  std::fstream _message_log;
-  std::mutex _message_log_mutex;
-
-public:
-  Partition(std::string filename);
-  virtual ~Partition();
-  uint64_t add(const proto::Message &message);
-};
 
 class Topic {
 private:

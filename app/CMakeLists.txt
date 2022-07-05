@@ -11,8 +11,10 @@ include_directories(${Protobuf_INCLUDE_DIRS})
 add_executable(app 
                 configuration.h configuration.cpp
                 nmq.cpp
+                partition.h partition.cpp
                 service_impl.h service_impl.cpp
                 topic.h topic.cpp
+                utils.h utils.cpp
 )
 target_link_libraries(
     app 
