@@ -5,6 +5,7 @@
 #include <mutex>
 #include <random>
 #include <string>
+#include <sys/_types/_ssize_t.h>
 #include <vector>
 
 #include "partition.h"
@@ -23,12 +24,9 @@ private:
   std::default_random_engine _random_engine;
   std::uniform_int_distribution<uint64_t> _distribution;
   std::vector<std::unique_ptr<Partition>> _partitions;
-  const std::string _partition_offset_log_filename;
-  std::fstream _partition_offset_log;
-  std::mutex _partition_offset_log_mutex;
 
 public:
-  Topic(std::string name, uint64_t partitions);
+  Topic(const std::string &name, const uint64_t partitions);
   virtual ~Topic();
   PartitionOffset add(const proto::Message &message);
 };

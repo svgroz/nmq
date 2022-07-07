@@ -12,9 +12,9 @@ add_executable(app
                 configuration.h configuration.cpp
                 nmq.cpp
                 partition.h partition.cpp
+                partition_log.h partition_log.cpp
                 service_impl.h service_impl.cpp
                 topic.h topic.cpp
-                utils.h
 )
 target_link_libraries(
     app 
