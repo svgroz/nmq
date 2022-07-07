@@ -5,10 +5,9 @@
 #include <mutex>
 #include <random>
 #include <string>
-#include <sys/_types/_ssize_t.h>
 #include <vector>
 
-#include "partition.h"
+#include <nmq/core/partition.h>
 #include <nmq_server.pb.h>
 
 namespace nmq {

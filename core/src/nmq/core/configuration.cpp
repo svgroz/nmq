@@ -1,5 +1,4 @@
-#include "configuration.h"
-
+#include <nmq/core/configuration.h>
 
 #include <boost/log/trivial.hpp>
 #include <vector>

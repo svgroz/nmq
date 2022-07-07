@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
-#include "configuration.h"
-#include "topic.h"
+#include <nmq/core/configuration.h>
+#include <nmq/core/topic.h>
 
 int main(int argc, char **argv) {
   (void)argc;

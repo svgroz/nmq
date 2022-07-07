@@ -1,4 +1,4 @@
-#include "hash.h"
+#include <nmq/core/hash.h>
 
 int_fast32_t nmq::hashCode(const char *value, size_t size) {
   int_fast32_t h = 0;

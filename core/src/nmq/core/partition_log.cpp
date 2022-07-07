@@ -1,6 +1,6 @@
-#include "partition_log.h"
 #include <cstdlib>
 #include <fstream>
+#include <nmq/core/partition_log.h>
 
 #include <boost/log/trivial.hpp>
 #include <mutex>

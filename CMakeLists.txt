@@ -23,5 +23,6 @@ find_package(OpenSSL REQUIRED)
 find_package(Boost COMPONENTS log unit_test_framework REQUIRED)
 
 add_subdirectory(app)
+add_subdirectory(core)
 add_subdirectory(proto)
-add_subdirectory(test_app)
+add_subdirectory(test_core)

@@ -1,6 +1,6 @@
-#include "partition.h"
 #include <boost/log/trivial.hpp>
 #include <mutex>
+#include <nmq/core/partition.h>
 
 using namespace nmq;
 

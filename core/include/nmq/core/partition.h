@@ -1,6 +1,6 @@
 #pragma once
 
-#include "partition_log.h"
+#include <nmq/core/partition_log.h>
 #include <fstream>
 #include <nmq_server.pb.h>
 #include <string>

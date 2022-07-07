@@ -1,0 +1,25 @@
+project(core)
+
+add_library(core)
+target_sources(
+    core
+    PUBLIC
+    src/nmq/core/configuration.cpp
+    src/nmq/core/hash.cpp
+    src/nmq/core/partition.cpp
+    src/nmq/core/partition_log.cpp
+    src/nmq/core/service_impl.cpp
+    src/nmq/core/topic.cpp
+)
+target_include_directories(
+    core
+    PUBLIC
+    include
+)
+target_link_libraries(
+    core 
+    PUBLIC 
+    proto
+    ${Protobuf_LIBRARIES} 
+    Boost::log
+)

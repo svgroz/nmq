@@ -1,4 +1,4 @@
-#include "topic.h"
+#include <nmq/core/topic.h>
 
 #include <boost/log/trivial.hpp>
 
