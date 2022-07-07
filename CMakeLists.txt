@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.20)
 
-project (nmq)
+project(nmq)
 enable_testing()
 
 
@@ -24,3 +24,4 @@ find_package(Boost COMPONENTS log unit_test_framework REQUIRED)
 
 add_subdirectory(app)
 add_subdirectory(proto)
+add_subdirectory(test_app)
