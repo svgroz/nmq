@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "partition.h"
-#include <nmq_server.pb.h>
+#include <proto/nmq_server.pb.h>
 
 namespace nmq {
 

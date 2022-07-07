@@ -8,8 +8,6 @@
 #include <vector>
 
 #include "configuration.h"
-#include "nmq_server.grpc.pb.h"
-#include "nmq_server.pb.h"
 #include "topic.h"
 
 int main(int argc, char **argv) {

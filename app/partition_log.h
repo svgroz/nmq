@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nmq_server.pb.h"
+#include <proto/nmq_server.pb.h>
 #include <cstdint>
 #include <fstream>
 #include <mutex>

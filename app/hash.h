@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include <stdlib>
+#include <cstdlib>
 
 namespace nmq {
 int_fast32_t hashCode(const char *value, size_t size);

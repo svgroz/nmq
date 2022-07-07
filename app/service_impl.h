@@ -2,7 +2,7 @@
 
 #include <grpcpp/support/status.h>
 
-#include "nmq_server.grpc.pb.h"
+#include <proto/nmq_server.grpc.pb.h>
 
 namespace nmq {
 class ServiceImpl final : public proto::Api::Service {
