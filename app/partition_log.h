@@ -1,9 +1,10 @@
 #pragma once
 
-#include <proto/nmq_server.pb.h>
 #include <cstdint>
 #include <fstream>
 #include <mutex>
+#include <nmq_server.pb.h>
+
 namespace nmq {
 class PartitionLog {
 private:

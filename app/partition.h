@@ -2,7 +2,7 @@
 
 #include "partition_log.h"
 #include <fstream>
-#include <proto/nmq_server.pb.h>
+#include <nmq_server.pb.h>
 #include <string>
 
 namespace nmq {
