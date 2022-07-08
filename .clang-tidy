@@ -1,7 +1,7 @@
 ---
 Checks:          'boost-*,bugprone-*,clang-*,concurrency-*,google-*,misc-*,modernize-*,performance-*,'
 WarningsAsErrors: ''
-HeaderFilterRegex: ''
+HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false
 FormatStyle:     none
 User:            semen.grozovsky
