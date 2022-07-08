@@ -1,5 +1,7 @@
 project(proto)
 
+set(CMAKE_CXX_STANDARD 11)
+
 add_library(proto)
 target_sources(proto PUBLIC nmq_server.proto)
 

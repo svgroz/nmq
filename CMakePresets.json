@@ -1,0 +1,19 @@
+{
+    "version": 2,
+    "configurePresets": [
+        {
+            "name": "llvm",
+            "displayName": "llvm",
+            "description": "llvm",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/toolchain/macos-llvm-brew.cmake"
+            },
+            "debug": {
+                "output": false
+            }
+        }
+    ]
+}
