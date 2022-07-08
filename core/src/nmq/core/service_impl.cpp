@@ -2,12 +2,12 @@
 
 #include <grpcpp/support/status.h>
 
-::grpc::Status nmq::ServiceImpl::Send(::grpc::ServerContext *context,
-                                      const ::proto::SendRequest *request,
-                                      ::proto::SendResponse *response) {
+auto nmq::ServiceImpl::Send(::grpc::ServerContext *context,
+                            const ::proto::SendRequest *request,
+                            ::proto::SendResponse *response) -> ::grpc::Status {
   (void)context;
   (void)request;
   (void)response;
 
-  return ::grpc::Status();
+  return {};
 };

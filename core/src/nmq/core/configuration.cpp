@@ -3,10 +3,11 @@
 #include <boost/log/trivial.hpp>
 #include <vector>
 
-std::vector<nmq::TopicConfiguration> nmq::Configuration::topics() {
+namespace nmq {
+auto Configuration::topics() -> std::vector<nmq::TopicConfiguration> {
   auto result = std::vector<nmq::TopicConfiguration>();
-  result.push_back(TopicConfiguration("foo", 1));
-  result.push_back(TopicConfiguration("bar", 2));
+  result.emplace_back("foo", 1);
+  result.emplace_back("bar", 2);
 
   for (nmq::TopicConfiguration c : result) {
     BOOST_LOG_TRIVIAL(info)
@@ -15,3 +16,5 @@ std::vector<nmq::TopicConfiguration> nmq::Configuration::topics() {
 
   return result;
 };
+
+} // namespace nmq

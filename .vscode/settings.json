@@ -1,3 +1,14 @@
 {
-    "clangd.path": "/usr/local/opt/llvm/bin/clangd"
+    "clang-format.executable": "/usr/local/opt/llvm/bin/clang-format",
+    "clang-format.language.apex.enable": false,
+    "clang-format.language.glsl.enable": false,
+    "clang-format.language.cuda.enable": false,
+    "clang-format.language.java.enable": false,
+    "clang-format.language.javascript.enable": true,
+    "clang-format.language.objective-c.enable": false,
+    "clang-format.language.objective-cpp.enable": false,
+    "clang-format.style": "LLVM",
+    "clangd.path": "/usr/local/opt/llvm/bin/clangd",
+    "clang-tidy.buildPath": "${workspaceFolder}/build",
+    "clang-tidy.executable": "/usr/local/opt/llvm/bin/clang-tidy"
 }

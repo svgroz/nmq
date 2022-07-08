@@ -1,15 +1,17 @@
 #include <boost/log/trivial.hpp>
+#include <filesystem>
 #include <mutex>
 #include <nmq/core/partition.h>
 
-using namespace nmq;
+namespace nmq {
+Partition::Partition(const std::filesystem::path &path)
+    : _partition_log(path / "partition.log"), _partition_mutex(){};
 
-Partition::Partition(const std::string &filename)
-    : _partition_log(filename), _partition_mutex(){};
+Partition::~Partition() = default;
 
-nmq::Partition::~Partition(){};
-
-uint64_t nmq::Partition::add(const proto::Message &message) {
+auto Partition::add(const proto::Message &message) -> std::uint64_t {
   std::lock_guard<std::mutex> guard(_partition_mutex);
   return _partition_log.add(message);
 };
+
+} // namespace nmq

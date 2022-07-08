@@ -1,29 +1,39 @@
+#include <cstddef>
+#include <filesystem>
+#include <fstream>
 #include <nmq/core/topic.h>
 
 #include <boost/log/trivial.hpp>
 
-nmq::Topic::Topic(const std::string &name, const uint64_t partitions)
+namespace nmq {
+Topic::Topic(const std::filesystem::path &path, const std::string &name,
+             const std::size_t partitions)
     : _random_engine(std::default_random_engine(std::time(nullptr))),
-      _distribution(0, partitions - 1) {
-  for (uint64_t i = 0; i < partitions; i++) {
-    auto partition_filename = name + "_" + std::to_string(i);
-    this->_partitions.push_back(
-        std::make_unique<nmq::Partition>(partition_filename));
+      _distribution(0, partitions - 1), _partitions(partitions - 1) {
+
+  for (std::size_t i = 0; i < partitions; i++) {
+    _partitions.push_back(std::make_unique<nmq::Partition>(
+        path / (name + "_" + std::to_string(i))));
   }
+  
 };
 
-nmq::Topic::~Topic(){};
+Topic::~Topic() = default;
 
-nmq::PartitionOffset nmq::Topic::add(const proto::Message &message) {
+auto Topic::add(const proto::Message &message) -> PartitionOffset {
   uint64_t partition_by_key;
   if (message.has_key()) {
-    partition_by_key =
-        std::hash<std::string>{}(message.key()) % _partitions.size();
+    partition_by_key = _key_hasher(message.key()) % _partitions.size();
   } else {
-    partition_by_key = _distribution(_random_engine);
+    partition_by_key 
+    
+    
+    = _distribution(_random_engine);
   }
 
   uint64_t offset = _partitions.at(partition_by_key)->add(message);
 
-  return nmq::PartitionOffset{partition_by_key, offset};
+  return PartitionOffset{partition_by_key, offset};
 };
+
+} // namespace nmq

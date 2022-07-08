@@ -1,10 +1,14 @@
 #pragma once
 
+#include <cstddef>
+#include <filesystem>
 #include <fstream>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <random>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <nmq/core/partition.h>
@@ -12,22 +16,24 @@
 
 namespace nmq {
 
-typedef struct {
+using PartitionOffset = struct {
   uint64_t partiton;
   uint64_t offset;
-} PartitionOffset;
+};
 
 class Topic {
 private:
-  Topic(const Topic &) = delete;
+  std::hash<std::string_view> _key_hasher;
   std::default_random_engine _random_engine;
   std::uniform_int_distribution<uint64_t> _distribution;
   std::vector<std::unique_ptr<Partition>> _partitions;
 
 public:
-  Topic(const std::string &name, const uint64_t partitions);
+  Topic(const std::filesystem::path &path, const std::string &name,
+        const std::size_t partitions);
+  Topic(const Topic &) = delete;
   virtual ~Topic();
-  PartitionOffset add(const proto::Message &message);
+  auto add(const proto::Message &message) -> PartitionOffset;
 };
 
 }; // namespace nmq
