@@ -1,28 +1,26 @@
 #pragma once
 
-#include <cstdint>
 #include <iostream>
 #include <string>
 #include <vector>
 
 namespace nmq {
 class TopicConfiguration {
- private:
+private:
   std::string _name;
-  uint64_t _partitions;
+  std::size_t _partitions;
 
- public:
-  TopicConfiguration(std::string name, uint64_t partitions)
-      : _name(name), _partitions(partitions){};
-  virtual ~TopicConfiguration(){};
-  std::string name() { return _name; };
-  uint64_t partitions() { return _partitions; };
+public:
+  TopicConfiguration(const std::string &name, std::size_t partitions);
+  virtual ~TopicConfiguration();
+  auto name() -> std::string;
+  auto partitions() -> std::size_t;
 };
 
 class Configuration {
- public:
-  Configuration(){};
-  virtual ~Configuration(){};
-  std::vector<TopicConfiguration> topics();
+public:
+  Configuration();
+  virtual ~Configuration();
+  auto topics() -> std::vector<TopicConfiguration>;
 };
-};  // namespace nmq
+}; // namespace nmq

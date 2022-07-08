@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <fstream>
 #include <mutex>
 #include <nmq_server.pb.h>
@@ -8,12 +7,12 @@
 namespace nmq {
 class PartitionLog {
 private:
-  PartitionLog(const PartitionLog &) = delete;
   std::fstream _log_file;
 
 public:
-  PartitionLog(const std::string &filename);
+  explicit PartitionLog(const std::string &filename);
+  PartitionLog(const PartitionLog &) = delete;
   virtual ~PartitionLog();
-  std::uint64_t add(const proto::Message &message);
+  auto add(const proto::Message &message) -> std::uint64_t;
 };
 } // namespace nmq
