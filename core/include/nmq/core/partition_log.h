@@ -3,6 +3,8 @@
 #include <fstream>
 #include <mutex>
 
+#include <nmq/core/message.h>
+
 namespace nmq {
 class PartitionLog {
 private:
@@ -12,6 +14,6 @@ public:
   explicit PartitionLog(const std::string &filename);
   PartitionLog(const PartitionLog &) = delete;
   virtual ~PartitionLog();
-  auto add(const proto::Message &message) -> std::uint64_t;
+  auto add(const Message &message) -> std::uint64_t;
 };
 } // namespace nmq

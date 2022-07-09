@@ -9,7 +9,7 @@ Partition::Partition(const std::filesystem::path &path)
 
 Partition::~Partition() = default;
 
-auto Partition::add(const proto::Message &message) -> std::uint64_t {
+auto Partition::add(const Message &message) -> std::uint64_t {
   std::lock_guard<std::mutex> guard(_partition_mutex);
   return _partition_log.add(message);
 };

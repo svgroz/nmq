@@ -6,6 +6,7 @@
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <nmq/core/message.h>
 #include <random>
 #include <string>
 #include <string_view>
@@ -32,7 +33,7 @@ public:
         const std::size_t partitions);
   Topic(const Topic &) = delete;
   virtual ~Topic();
-  auto add(const proto::Message &message) -> PartitionOffset;
+  auto add(const Message &message) -> PartitionOffset;
 };
 
 }; // namespace nmq

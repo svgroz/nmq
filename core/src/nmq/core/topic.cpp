@@ -15,23 +15,15 @@ Topic::Topic(const std::filesystem::path &path, const std::string &name,
     _partitions.push_back(std::make_unique<nmq::Partition>(
         path / (name + "_" + std::to_string(i))));
   }
-  
 };
 
 Topic::~Topic() = default;
 
-auto Topic::add(const proto::Message &message) -> PartitionOffset {
-  uint64_t partition_by_key;
-  if (message.has_key()) {
-    partition_by_key = _key_hasher(message.key()) % _partitions.size();
-  } else {
-    partition_by_key 
-    
-    
-    = _distribution(_random_engine);
-  }
+auto Topic::add(const Message &message) -> PartitionOffset {
+  (void)_key_hasher;
+  std::uint64_t partition_by_key = _distribution(_random_engine);
 
-  uint64_t offset = _partitions.at(partition_by_key)->add(message);
+  std::uint64_t offset = _partitions.at(partition_by_key)->add(message);
 
   return PartitionOffset{partition_by_key, offset};
 };

@@ -1,5 +1,7 @@
 project(core)
 
+enable_testing()
+
 if (MSVC)
     # warning level 4 and all warnings as errors
     add_compile_options(/W4 /WX)
@@ -8,7 +10,7 @@ else()
     add_compile_options(-Wall -Wextra -pedantic -Werror)
 endif()
 
-add_library(core)
+add_library(core SHARED)
 target_sources(
     core
     PUBLIC
@@ -23,6 +25,8 @@ target_include_directories(
     core
     PUBLIC
     include
+    PRIVATE 
+    ${Boost_INCLUDE_DIRS}
 )
 target_link_libraries(
     core 
