@@ -3,7 +3,6 @@
 #include <filesystem>
 #include <fstream>
 #include <nmq/core/partition_log.h>
-#include <nmq_server.pb.h>
 #include <string>
 
 namespace nmq {

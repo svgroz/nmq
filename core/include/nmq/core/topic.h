@@ -12,7 +12,6 @@
 #include <vector>
 
 #include <nmq/core/partition.h>
-#include <nmq_server.pb.h>
 
 namespace nmq {
 

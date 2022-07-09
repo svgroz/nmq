@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <mutex>
-#include <nmq_server.pb.h>
 
 namespace nmq {
 class PartitionLog {
