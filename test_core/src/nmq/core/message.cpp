@@ -28,10 +28,13 @@ BOOST_AUTO_TEST_CASE(desserialize_exceptions) {
   std::vector<char> source1{};
   std::vector<char> source2{'1', '2', '3', '4'};
   std::vector<char> source3{'1', '2', '3', '4', '1', '2', '3', '4'};
+  std::vector<char> source4{'1', '2', '3', '4', '1', '2', '3', '4',
+                            '1', '2', '3', '4', '1', '2', '3', '4'};
 
   BOOST_CHECK_THROW(Message::desserialize(source1), std::invalid_argument);
   BOOST_CHECK_THROW(Message::desserialize(source2), std::invalid_argument);
   BOOST_CHECK_THROW(Message::desserialize(source3), std::invalid_argument);
+  BOOST_CHECK_THROW(Message::desserialize(source4), std::invalid_argument);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
