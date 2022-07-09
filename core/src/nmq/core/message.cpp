@@ -45,40 +45,55 @@ auto Message::serialize() -> std::shared_ptr<std::vector<char>> {
   return buffer;
 }
 
-inline auto read_vector(char *source) -> std::shared_ptr<std::vector<char>> {
+inline auto check_length(std::size_t source_size, std::size_t expected_min_size)
+    -> void {
+  if (source_size < expected_min_size) {
+    BOOST_LOG_TRIVIAL(error) << "min expected size: " << expected_min_size
+                             << " actual size: " << source_size;
+    throw std::invalid_argument("illegal source length");
+  }
+}
+
+inline auto read_vector(char *source, std::size_t size)
+    -> std::shared_ptr<std::vector<char>> {
+
   std::uint64_t vector_size = 0;
   std::memcpy(&vector_size, source, sizeof(std::uint64_t));
-  if (vector_size < 1) {
+  if (vector_size == 0) {
     return std::make_shared<std::vector<char>>(0);
   }
 
-  BOOST_LOG_TRIVIAL(debug) << vector_size;
+  check_length(size, sizeof(std::uint64_t) + vector_size);
 
   auto result = std::make_shared<std::vector<char>>(vector_size);
   source = source + sizeof(std::uint64_t);
   std::memcpy(result->data(), source, vector_size);
-
-  BOOST_LOG_TRIVIAL(debug) << result->data();
-
 
   return result;
 }
 
 auto Message::desserialize(std::vector<char> &source)
     -> std::shared_ptr<Message> {
+
+  std::size_t source_size = source.size();
+  check_length(source_size, sizeof(std::uint64_t) * 2);
+
   char *sourse_ptr = source.data();
-  std::shared_ptr<std::vector<char>> key = read_vector(sourse_ptr);
+  std::shared_ptr<std::vector<char>> key = read_vector(sourse_ptr, source_size);
+
+  auto min_expected_size =
+      sizeof(std::uint64_t) + key->size() + sizeof(std::uint64_t);
+
+  check_length(source_size, min_expected_size);
+
   sourse_ptr = sourse_ptr + sizeof(std::uint64_t) + key->size();
-  std::shared_ptr<std::vector<char>> value = read_vector(sourse_ptr);
+  std::shared_ptr<std::vector<char>> value = read_vector(
+      sourse_ptr, source_size - key->size() - sizeof(std::uint64_t));
   return std::make_unique<Message>(*key, *value);
 }
 
-auto Message::key() -> std::vector<char> {
-  return _key;
-}
+auto Message::key() -> std::vector<char> { return _key; }
 
-auto Message::value() -> std::vector<char> {
-  return _value;
-}
+auto Message::value() -> std::vector<char> { return _value; }
 
 } // namespace nmq
