@@ -3,8 +3,6 @@
 #include <fstream>
 #include <nmq/core/topic.h>
 
-#include <boost/log/trivial.hpp>
-
 namespace nmq {
 Topic::Topic(const std::filesystem::path &path, const std::string &name,
              const std::size_t partitions)

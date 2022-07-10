@@ -1,15 +1,23 @@
 project(test_core)
 
-find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-
-add_executable(test_core)
-target_sources(
-    test_core
-    PUBLIC
-    src/nmq/core/message.cpp
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
 )
-target_include_directories(test_core PRIVATE ${Boost_INCLUDE_DIRS})
-target_compile_definitions(test_core PRIVATE "BOOST_TEST_DYN_LINK=1")
-target_link_libraries(test_core core Boost::unit_test_framework)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
-add_test(NAME example COMMAND test_core)
+add_executable(
+    key_value
+    src/nmq/core/key_value.cpp
+)
+target_link_libraries(
+    key_value
+    core
+    gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(key_value)

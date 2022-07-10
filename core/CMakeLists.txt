@@ -16,6 +16,7 @@ target_sources(
     PUBLIC
     src/nmq/core/configuration.cpp 
     src/nmq/core/header.cpp
+    src/nmq/core/key_value.cpp
     src/nmq/core/message.cpp
     src/nmq/core/partition.cpp 
     src/nmq/core/partition_log.cpp
@@ -25,11 +26,9 @@ target_include_directories(
     core
     PUBLIC
     include
-    PRIVATE 
-    ${Boost_INCLUDE_DIRS}
 )
-target_link_libraries(
-    core 
-    PUBLIC 
-    Boost::log
-)
+#target_link_libraries(
+    #core 
+    #PUBLIC 
+    #Boost::log
+#)

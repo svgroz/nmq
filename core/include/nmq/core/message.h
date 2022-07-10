@@ -2,28 +2,23 @@
 
 #include <vector>
 
-#include <functional>
-#include <iostream>
 #include <memory>
-#include <nmq/core/header.h>
+#include <nmq/core/key_value.h>
 
 namespace nmq {
 
 class Message {
 private:
-  std::vector<std::unique_ptr<Header>> _headers;
-  std::vector<char> _key;
-  std::vector<char> _value;
+  std::unique_ptr<KeyValue> _key_value;
+  std::vector<std::unique_ptr<KeyValue>> _headers;
 
 public:
-  Message(std::vector<char> &key, std::vector<char> &value);
+  explicit Message(std::unique_ptr<KeyValue> key_value);
   Message(const Message &) = delete;
   virtual ~Message();
-  auto add_header(std::vector<char> &key, std::vector<char> &value) -> void;
-  auto serialize() -> std::shared_ptr<std::vector<char>>;
-  static auto desserialize(std::vector<char> &source)
-      -> std::shared_ptr<Message>;
-  auto key() -> std::vector<char>;
-  auto value() -> std::vector<char>;
+  auto add_header(std::unique_ptr<KeyValue> header) -> void;
+  static auto read(char *source, const std::size_t source_size)
+      -> std::unique_ptr<Message>;
+  auto write(char *target, const std::size_t target_size) -> void;
 };
 } // namespace nmq

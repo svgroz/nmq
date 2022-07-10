@@ -1,4 +1,3 @@
-#include <boost/log/trivial.hpp>
 #include <filesystem>
 #include <mutex>
 #include <nmq/core/partition.h>
