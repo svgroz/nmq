@@ -59,12 +59,8 @@ auto KeyValue::read(char *source, std::size_t size)
     -> std::unique_ptr<KeyValue> {
   checkMinSize(size);
 
-  KeyValueHeader key_size = -1;
-  KeyValueHeader value_size = -1;
-
-  std::memcpy(&key_size, source, sizeof(KeyValueHeader));
-  std::memcpy(&value_size, source + sizeof(KeyValueHeader),
-              sizeof(KeyValueHeader));
+  KeyValueHeader key_size = reinterpret_cast<KeyValueHeader *>(source)[0];
+  KeyValueHeader value_size = reinterpret_cast<KeyValueHeader *>(source)[1];
 
   std::size_t expected_size =
       KEY_VALUE_META_SIZE + std::max(key_size, 0) + std::max(value_size, 0);
@@ -95,10 +91,9 @@ auto KeyValue::write(char *target, std::size_t size) -> void {
 
   checkExpectedSize(expected_size, size);
 
-  std::memcpy(target, &key_size, sizeof(KeyValueHeader));
-  target = target + sizeof(KeyValueHeader);
-  std::memcpy(target, &value_size, sizeof(KeyValueHeader));
-  target = target + sizeof(KeyValueHeader);
+  reinterpret_cast<KeyValueHeader *>(target)[0] = key_size;
+  reinterpret_cast<KeyValueHeader *>(target)[1] = value_size;
+  target = target + KEY_VALUE_META_SIZE;
 
   if (key_size > 0) {
     std::memcpy(target, _key.data(), key_size);
