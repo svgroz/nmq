@@ -12,23 +12,19 @@ static const KeyValueHeader MAX_KEY_VALUE_HEADER_VALUE =
 
 inline void check_min_size(std::size_t actual) {
   if (KEY_VALUE_META_SIZE > actual) {
-    throw std::invalid_argument("check_min_size");
+    throw ActualSizeLessThanMinSize(actual);
   }
 }
 
 inline void check_expected_size(std::size_t expected, std::size_t actual) {
   if (expected != actual) {
-    throw std::invalid_argument(
-        "check_expected_size expected: " + std::to_string(expected) +
-        " actual: " + std::to_string(actual));
+    throw ActualSizeLessThanExpectedSize(actual, expected);
   }
 }
 
 inline void check_max_size(std::size_t actual) {
   if (actual > MAX_KEY_VALUE_HEADER_VALUE) {
-    throw std::invalid_argument("check_max_size expected <: " +
-                                std::to_string(MAX_KEY_VALUE_HEADER_VALUE) +
-                                " actual: " + std::to_string(actual));
+    throw ActualSizeHigherThanMinSize(actual);
   }
 }
 
@@ -40,10 +36,7 @@ inline auto init_array(char *source, std::size_t size) -> std::vector<char> {
 
 inline auto size_of_inner_vector(std::size_t source_size) -> KeyValueHeader {
   if (source_size > MAX_KEY_VALUE_HEADER_VALUE) {
-    throw std::invalid_argument(
-        "sizeOf: this exception should never occur. source vector size " +
-        std::to_string(source_size) + " > " +
-        std::to_string(MAX_KEY_VALUE_HEADER_VALUE));
+    throw ActualSizeHigherThanMaxSize(source_size);
   }
   return static_cast<KeyValueHeader>(source_size);
 }

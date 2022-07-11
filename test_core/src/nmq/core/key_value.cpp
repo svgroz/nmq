@@ -69,7 +69,7 @@ TEST(KeyValueTest, SadPathReadK) {
 
   EXPECT_THROW(
       nmq::KeyValue::read((char *)sourse_buffer, sizeof(sourse_buffer)),
-      std::invalid_argument);
+      nmq::ActualSizeLessThanMinSize);
 }
 
 TEST(KeyValueTest, SadPathReadNullptr) {
@@ -79,25 +79,25 @@ TEST(KeyValueTest, SadPathReadNullptr) {
 TEST(KeyValueTest, SadPathReadSmallThanKV) {
   nmq::KeyValueHeader sourse_buffer[1];
 
-  EXPECT_THROW(nmq::KeyValue::read((char *)sourse_buffer,
-                                   sizeof(nmq::KeyValueHeader) - 1),
-               std::invalid_argument);
+  EXPECT_THROW(
+      nmq::KeyValue::read((char *)sourse_buffer, sizeof(sourse_buffer)),
+      nmq::ActualSizeLessThanMinSize);
 }
 
 TEST(KeyValueTest, SadPathReadKBiggerVOk) {
   nmq::KeyValueHeader sourse_buffer[] = {100, 0};
 
-  EXPECT_THROW(nmq::KeyValue::read((char *)sourse_buffer,
-                                   sizeof(nmq::KeyValueHeader) - 1),
-               std::invalid_argument);
+  EXPECT_THROW(
+      nmq::KeyValue::read((char *)sourse_buffer, sizeof(sourse_buffer)),
+      nmq::ActualSizeLessThanExpectedSize);
 }
 
 TEST(KeyValueTest, SadPathReadKOkVBigger) {
   nmq::KeyValueHeader sourse_buffer[] = {0, 100};
 
-  EXPECT_THROW(nmq::KeyValue::read((char *)sourse_buffer,
-                                   sizeof(nmq::KeyValueHeader) - 1),
-               std::invalid_argument);
+  EXPECT_THROW(
+      nmq::KeyValue::read((char *)sourse_buffer, sizeof(sourse_buffer)),
+      nmq::ActualSizeLessThanExpectedSize);
 }
 
 //-------------------------------------------------------------------------------
@@ -218,7 +218,7 @@ TEST(KeyValueTest, SadPathWriteSmallerThanNecesseryBuffer) {
 
   EXPECT_THROW(
       source_kv->write((char *)source_buffer, sizeof(source_buffer) - 1),
-      std::invalid_argument);
+      nmq::ActualSizeLessThanExpectedSize);
 }
 
 TEST(KeyValueTest, SadPathWriteSmallerThanKVHeaderBuffer) {
@@ -228,7 +228,7 @@ TEST(KeyValueTest, SadPathWriteSmallerThanKVHeaderBuffer) {
   auto source_kv =
       nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
-  EXPECT_THROW(source_kv->write((char *)source_buffer,
-                                (sizeof(nmq::KeyValueHeader) * 2) - 1),
-               std::invalid_argument);
+  EXPECT_THROW(
+      source_kv->write((char *)source_buffer, sizeof(source_buffer) - 1),
+      nmq::ActualSizeLessThanExpectedSize);
 }
