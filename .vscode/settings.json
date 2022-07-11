@@ -69,11 +69,15 @@
         "variant": "cpp",
         "filesystem": "cpp",
         "*.ipp": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "any": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp"
     },
     "cmake.ctestArgs": [
         "-T",
         "test",
+        "--verbose",
         "--output-on-failure"
     ]
 }
