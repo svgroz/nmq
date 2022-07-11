@@ -29,7 +29,7 @@ TEST(KeyValueTest, HappyPathKNullVNull) {
 
 TEST(KeyValueTest, HappyPathKVNull) {
 
-  nmq::KeyValueHeader x[] = {4, 0, -1};
+  nmq::KeyValueHeader x[] = {sizeof(nmq::KeyValueHeader), 0, -1};
 
   auto kv = nmq::KeyValue::read((char *)x, sizeof(x));
 
@@ -41,7 +41,7 @@ TEST(KeyValueTest, HappyPathKVNull) {
 
 TEST(KeyValueTest, HappyPathKNullV) {
 
-  nmq::KeyValueHeader x[] = {-1, 4, 0};
+  nmq::KeyValueHeader x[] = {-1, sizeof(nmq::KeyValueHeader), 0};
 
   auto kv = nmq::KeyValue::read((char *)x, sizeof(x));
 
@@ -53,7 +53,7 @@ TEST(KeyValueTest, HappyPathKNullV) {
 
 TEST(KeyValueTest, HappyPathKV) {
 
-  nmq::KeyValueHeader x[] = {4, 4, 1, 1};
+  nmq::KeyValueHeader x[] = {sizeof(nmq::KeyValueHeader), sizeof(nmq::KeyValueHeader), 1, 1};
 
   auto kv = nmq::KeyValue::read((char *)x, sizeof(x));
 
