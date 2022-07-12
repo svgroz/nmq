@@ -21,6 +21,7 @@ public:
         _headers(std::move(message._headers)){};
   virtual ~Message() = default;
   auto add_header(KeyValue &header) -> void;
+  auto size() -> std::size_t;
   static auto read(char *source, std::size_t source_size) -> Message;
   auto write(char *target, std::size_t target_size) -> void;
 };

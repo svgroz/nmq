@@ -7,4 +7,6 @@ TEST(MessageTest, HappyPathReadEmptyNull) {
 
   nmq::Message message =
       nmq::Message::read((char *)sourse_buffer, sizeof(sourse_buffer));
+
+  EXPECT_EQ(message.size(), sizeof(sourse_buffer));
 }
