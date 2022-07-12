@@ -12,6 +12,7 @@ FetchContent_MakeAvailable(googletest)
 add_executable(
     key_value
     src/nmq/core/key_value.cpp
+    src/nmq/core/message.cpp
 )
 target_link_libraries(
     key_value

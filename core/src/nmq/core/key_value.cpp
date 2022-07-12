@@ -17,7 +17,7 @@ inline void check_min_size(std::size_t actual) {
 }
 
 inline void check_expected_size(std::size_t expected, std::size_t actual) {
-  if (expected != actual) {
+  if (actual < expected) {
     throw ActualSizeLessThanExpectedSize(actual, expected);
   }
 }
@@ -57,14 +57,14 @@ auto KeyValue::read(char *source, std::size_t size) -> KeyValue {
 
   check_expected_size(expected_size, size);
 
-  bool has_key = key_size > 0;
-  bool has_value = value_size > 0;
+  bool has_key = key_size > -1;
+  bool has_value = value_size > -1;
   std::vector<char> key =
-      has_key ? init_vector(source + KEY_VALUE_META_SIZE, key_size)
-              : std::vector<char>(0);
+      key_size > -1 ? init_vector(source + KEY_VALUE_META_SIZE, key_size)
+                    : std::vector<char>(0);
 
   std::vector<char> value =
-      has_value > 0
+      value_size > -1
           ? init_vector(source + KEY_VALUE_META_SIZE + key_size, value_size)
           : std::vector<char>(0);
 

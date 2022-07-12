@@ -1,6 +1,7 @@
 #include <cinttypes>
 #include <exception>
 #include <memory>
+#include <optional>
 #include <vector>
 
 namespace nmq {
@@ -81,7 +82,7 @@ public:
   auto write(char *target, std::size_t size) -> void;
 
   auto size() -> std::size_t {
-    return (sizeof(bool) * 2) + (_has_key ? _key.size() : 0) +
+    return (sizeof(KeyValueHeader) * 2) + (_has_key ? _key.size() : 0) +
            (_has_value ? _value.size() : 0);
   };
 };

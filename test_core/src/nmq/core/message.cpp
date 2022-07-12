@@ -1,15 +1,10 @@
-#define BOOST_TEST_MODULE nmq::Message
-#include <boost/log/trivial.hpp>
-#include <boost/test/included/unit_test.hpp>
+#include <gtest/gtest.h>
 
 #include <nmq/core/message.h>
 
-BOOST_AUTO_TEST_SUITE(message)
+TEST(MessageTest, HappyPathReadEmptyNull) {
+  nmq::KeyValueHeader sourse_buffer[] = {0, -1, -1, 0};
 
-BOOST_AUTO_TEST_CASE(happy_path_k_v) {}
-
-BOOST_AUTO_TEST_CASE(happy_path_nullptr_v) {}
-
-BOOST_AUTO_TEST_CASE(happy_path_k_nullptr) {}
-
-BOOST_AUTO_TEST_SUITE_END()
+  nmq::Message message =
+      nmq::Message::read((char *)sourse_buffer, sizeof(sourse_buffer));
+}

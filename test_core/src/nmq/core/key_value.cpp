@@ -4,19 +4,20 @@
 
 #include <nmq/core/key_value.h>
 
-TEST(KeyValueTest, HappyPathReadEmptyKV) {
+TEST(KeyValueTest, HappyPathReadKEmptyVEmpty) {
+
   nmq::KeyValueHeader sourse_buffer[] = {0, 0};
 
   auto kv = nmq::KeyValue::read((char *)sourse_buffer, sizeof(sourse_buffer));
 
-  EXPECT_EQ(kv.has_key(), false);
+  EXPECT_EQ(kv.has_key(), true);
   EXPECT_EQ(kv.key_size(), 0);
-  EXPECT_EQ(kv.has_value(), false);
+  EXPECT_EQ(kv.has_value(), true);
   EXPECT_EQ(kv.value_size(), 0);
 }
 
 TEST(KeyValueTest, HappyPathReadKNullVNull) {
-
+  
   nmq::KeyValueHeader sourse_buffer[] = {-1, -1};
 
   auto kv = nmq::KeyValue::read((char *)sourse_buffer, sizeof(sourse_buffer));
@@ -29,7 +30,7 @@ TEST(KeyValueTest, HappyPathReadKNullVNull) {
 
 TEST(KeyValueTest, HappyPathReadKVNull) {
 
-  nmq::KeyValueHeader sourse_buffer[] = {sizeof(nmq::KeyValueHeader), 0, -1};
+  nmq::KeyValueHeader sourse_buffer[] = {sizeof(nmq::KeyValueHeader), -1, -1};
 
   auto kv = nmq::KeyValue::read((char *)sourse_buffer, sizeof(sourse_buffer));
 
