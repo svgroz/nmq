@@ -57,23 +57,33 @@ public:
 class KeyValue {
 private:
   std::vector<char> _key;
-  const bool _has_key;
+  bool _has_key;
   std::vector<char> _value;
-  const bool _has_value;
+  bool _has_value;
 
 public:
   KeyValue(std::vector<char> key, bool has_key, std::vector<char> value,
-           bool has_value);
+           bool has_value)
+      : _key(std::move(key)), _has_key(has_key), _value(std::move(value)),
+        _has_value(has_value){};
   KeyValue(const KeyValue &) = delete;
+  KeyValue(KeyValue &&key_value) noexcept
+      : _key(std::move(key_value._key)), _has_key(key_value._has_key),
+        _value(std::move(key_value._value)), _has_value(key_value._has_value){};
   virtual ~KeyValue();
 
-  auto key() -> std::vector<char> { return _key; };
+  auto key_size() -> std::size_t { return _key.size(); };
   auto has_key() -> bool { return _has_key; };
-  auto value() -> std::vector<char> { return _value; };
+  auto value_size() -> std::size_t { return _value.size(); };
   auto has_value() -> bool { return _has_value; };
 
-  static auto read(char *source, std::size_t size) -> std::unique_ptr<KeyValue>;
+  static auto read(char *source, std::size_t size) -> KeyValue;
   auto write(char *target, std::size_t size) -> void;
+
+  auto size() -> std::size_t {
+    return (sizeof(bool) * 2) + (_has_key ? _key.size() : 0) +
+           (_has_value ? _value.size() : 0);
+  };
 };
 
 } // namespace nmq

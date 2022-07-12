@@ -9,16 +9,18 @@ namespace nmq {
 
 class Message {
 private:
-  std::unique_ptr<KeyValue> _key_value;
-  std::vector<std::unique_ptr<KeyValue>> _headers;
+  KeyValue _key_value;
+  std::vector<KeyValue> _headers;
 
 public:
-  explicit Message(std::unique_ptr<KeyValue> key_value);
+  explicit Message(KeyValue key_value) : _key_value(std::move(key_value)){};
   Message(const Message &) = delete;
-  virtual ~Message();
-  auto add_header(std::unique_ptr<KeyValue> header) -> void;
-  static auto read(char *source, const std::size_t source_size)
-      -> std::unique_ptr<Message>;
+  Message(Message &&message) noexcept
+      : _key_value(std::move(message._key_value)),
+        _headers(std::move(message._headers)){};
+  virtual ~Message() = default;
+  auto add_header(KeyValue &header) -> void;
+  static auto read(char *source, const std::size_t source_size) -> Message;
   auto write(char *target, const std::size_t target_size) -> void;
 };
 } // namespace nmq

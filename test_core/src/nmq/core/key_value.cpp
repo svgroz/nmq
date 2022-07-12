@@ -9,10 +9,10 @@ TEST(KeyValueTest, HappyPathReadEmptyKV) {
 
   auto kv = nmq::KeyValue::read((char *)sourse_buffer, sizeof(sourse_buffer));
 
-  EXPECT_EQ(kv->has_key(), false);
-  EXPECT_EQ(kv->key().size(), 0);
-  EXPECT_EQ(kv->has_value(), false);
-  EXPECT_EQ(kv->value().size(), 0);
+  EXPECT_EQ(kv.has_key(), false);
+  EXPECT_EQ(kv.key_size(), 0);
+  EXPECT_EQ(kv.has_value(), false);
+  EXPECT_EQ(kv.value_size(), 0);
 }
 
 TEST(KeyValueTest, HappyPathReadKNullVNull) {
@@ -21,10 +21,10 @@ TEST(KeyValueTest, HappyPathReadKNullVNull) {
 
   auto kv = nmq::KeyValue::read((char *)sourse_buffer, sizeof(sourse_buffer));
 
-  EXPECT_EQ(kv->has_key(), false);
-  EXPECT_EQ(kv->key().size(), 0);
-  EXPECT_EQ(kv->has_value(), false);
-  EXPECT_EQ(kv->value().size(), 0);
+  EXPECT_EQ(kv.has_key(), false);
+  EXPECT_EQ(kv.key_size(), 0);
+  EXPECT_EQ(kv.has_value(), false);
+  EXPECT_EQ(kv.value_size(), 0);
 }
 
 TEST(KeyValueTest, HappyPathReadKVNull) {
@@ -33,10 +33,10 @@ TEST(KeyValueTest, HappyPathReadKVNull) {
 
   auto kv = nmq::KeyValue::read((char *)sourse_buffer, sizeof(sourse_buffer));
 
-  EXPECT_EQ(kv->has_key(), true);
-  EXPECT_EQ(kv->key().size(), 4);
-  EXPECT_EQ(kv->has_value(), false);
-  EXPECT_EQ(kv->value().size(), 0);
+  EXPECT_EQ(kv.has_key(), true);
+  EXPECT_EQ(kv.key_size(), 4);
+  EXPECT_EQ(kv.has_value(), false);
+  EXPECT_EQ(kv.value_size(), 0);
 }
 
 TEST(KeyValueTest, HappyPathReadKNullV) {
@@ -45,10 +45,10 @@ TEST(KeyValueTest, HappyPathReadKNullV) {
 
   auto kv = nmq::KeyValue::read((char *)sourse_buffer, sizeof(sourse_buffer));
 
-  EXPECT_EQ(kv->has_key(), false);
-  EXPECT_EQ(kv->key().size(), 0);
-  EXPECT_EQ(kv->has_value(), true);
-  EXPECT_EQ(kv->value().size(), 4);
+  EXPECT_EQ(kv.has_key(), false);
+  EXPECT_EQ(kv.key_size(), 0);
+  EXPECT_EQ(kv.has_value(), true);
+  EXPECT_EQ(kv.value_size(), 4);
 }
 
 TEST(KeyValueTest, HappyPathReadKV) {
@@ -58,10 +58,10 @@ TEST(KeyValueTest, HappyPathReadKV) {
 
   auto kv = nmq::KeyValue::read((char *)sourse_buffer, sizeof(sourse_buffer));
 
-  EXPECT_EQ(kv->has_key(), true);
-  EXPECT_EQ(kv->key().size(), 4);
-  EXPECT_EQ(kv->has_value(), true);
-  EXPECT_EQ(kv->value().size(), 4);
+  EXPECT_EQ(kv.has_key(), true);
+  EXPECT_EQ(kv.key_size(), 4);
+  EXPECT_EQ(kv.has_value(), true);
+  EXPECT_EQ(kv.value_size(), 4);
 }
 
 TEST(KeyValueTest, SadPathReadK) {
@@ -110,15 +110,15 @@ TEST(KeyValueTest, HappyPathWriteEmptyKV) {
 
   char target_buffer[sizeof(source_buffer)];
 
-  source_kv->write(target_buffer, sizeof(target_buffer));
+  source_kv.write(target_buffer, sizeof(target_buffer));
 
   auto target_kv =
       nmq::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
 
-  EXPECT_EQ(source_kv->has_key(), target_kv->has_key());
-  EXPECT_EQ(source_kv->key().size(), target_kv->key().size());
-  EXPECT_EQ(source_kv->has_value(), target_kv->has_value());
-  EXPECT_EQ(source_kv->value().size(), target_kv->value().size());
+  EXPECT_EQ(source_kv.has_key(), target_kv.has_key());
+  EXPECT_EQ(source_kv.key_size(), target_kv.key_size());
+  EXPECT_EQ(source_kv.has_value(), target_kv.has_value());
+  EXPECT_EQ(source_kv.value_size(), target_kv.value_size());
 }
 
 TEST(KeyValueTest, HappyPathWriteKNullVNull) {
@@ -129,15 +129,15 @@ TEST(KeyValueTest, HappyPathWriteKNullVNull) {
 
   char target_buffer[sizeof(source_buffer)];
 
-  source_kv->write(target_buffer, sizeof(target_buffer));
+  source_kv.write(target_buffer, sizeof(target_buffer));
 
   auto target_kv =
       nmq::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
 
-  EXPECT_EQ(source_kv->has_key(), target_kv->has_key());
-  EXPECT_EQ(source_kv->key().size(), target_kv->key().size());
-  EXPECT_EQ(source_kv->has_value(), target_kv->has_value());
-  EXPECT_EQ(source_kv->value().size(), target_kv->value().size());
+  EXPECT_EQ(source_kv.has_key(), target_kv.has_key());
+  EXPECT_EQ(source_kv.key_size(), target_kv.key_size());
+  EXPECT_EQ(source_kv.has_value(), target_kv.has_value());
+  EXPECT_EQ(source_kv.value_size(), target_kv.value_size());
 }
 
 TEST(KeyValueTest, HappyPathWriteKVNull) {
@@ -148,15 +148,15 @@ TEST(KeyValueTest, HappyPathWriteKVNull) {
 
   char target_buffer[sizeof(source_buffer)];
 
-  source_kv->write(target_buffer, sizeof(target_buffer));
+  source_kv.write(target_buffer, sizeof(target_buffer));
 
   auto target_kv =
       nmq::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
 
-  EXPECT_EQ(source_kv->has_key(), target_kv->has_key());
-  EXPECT_EQ(source_kv->key().size(), target_kv->key().size());
-  EXPECT_EQ(source_kv->has_value(), target_kv->has_value());
-  EXPECT_EQ(source_kv->value().size(), target_kv->value().size());
+  EXPECT_EQ(source_kv.has_key(), target_kv.has_key());
+  EXPECT_EQ(source_kv.key_size(), target_kv.key_size());
+  EXPECT_EQ(source_kv.has_value(), target_kv.has_value());
+  EXPECT_EQ(source_kv.value_size(), target_kv.value_size());
 }
 
 TEST(KeyValueTest, HappyPathWriteKNullV) {
@@ -167,15 +167,15 @@ TEST(KeyValueTest, HappyPathWriteKNullV) {
 
   char target_buffer[sizeof(source_buffer)];
 
-  source_kv->write(target_buffer, sizeof(target_buffer));
+  source_kv.write(target_buffer, sizeof(target_buffer));
 
   auto target_kv =
       nmq::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
 
-  EXPECT_EQ(source_kv->has_key(), target_kv->has_key());
-  EXPECT_EQ(source_kv->key().size(), target_kv->key().size());
-  EXPECT_EQ(source_kv->has_value(), target_kv->has_value());
-  EXPECT_EQ(source_kv->value().size(), target_kv->value().size());
+  EXPECT_EQ(source_kv.has_key(), target_kv.has_key());
+  EXPECT_EQ(source_kv.key_size(), target_kv.key_size());
+  EXPECT_EQ(source_kv.has_value(), target_kv.has_value());
+  EXPECT_EQ(source_kv.value_size(), target_kv.value_size());
 }
 
 TEST(KeyValueTest, HappyPathWriteKV) {
@@ -187,15 +187,15 @@ TEST(KeyValueTest, HappyPathWriteKV) {
 
   char target_buffer[sizeof(source_buffer)];
 
-  source_kv->write(target_buffer, sizeof(target_buffer));
+  source_kv.write(target_buffer, sizeof(target_buffer));
 
   auto target_kv =
       nmq::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
 
-  EXPECT_EQ(source_kv->has_key(), target_kv->has_key());
-  EXPECT_EQ(source_kv->key().size(), target_kv->key().size());
-  EXPECT_EQ(source_kv->has_value(), target_kv->has_value());
-  EXPECT_EQ(source_kv->value().size(), target_kv->value().size());
+  EXPECT_EQ(source_kv.has_key(), target_kv.has_key());
+  EXPECT_EQ(source_kv.key_size(), target_kv.key_size());
+  EXPECT_EQ(source_kv.has_value(), target_kv.has_value());
+  EXPECT_EQ(source_kv.value_size(), target_kv.value_size());
 }
 
 TEST(KeyValueTest, SadPathWriteNullBuffer) {
@@ -205,7 +205,7 @@ TEST(KeyValueTest, SadPathWriteNullBuffer) {
   auto source_kv =
       nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
-  EXPECT_THROW(source_kv->write(nullptr, sizeof(source_buffer)),
+  EXPECT_THROW(source_kv.write(nullptr, sizeof(source_buffer)),
                std::invalid_argument);
 }
 
@@ -217,7 +217,7 @@ TEST(KeyValueTest, SadPathWriteSmallerThanNecesseryBuffer) {
       nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   EXPECT_THROW(
-      source_kv->write((char *)source_buffer, sizeof(source_buffer) - 1),
+      source_kv.write((char *)source_buffer, sizeof(source_buffer) - 1),
       nmq::ActualSizeLessThanExpectedSize);
 }
 
@@ -229,6 +229,6 @@ TEST(KeyValueTest, SadPathWriteSmallerThanKVHeaderBuffer) {
       nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   EXPECT_THROW(
-      source_kv->write((char *)source_buffer, sizeof(source_buffer) - 1),
+      source_kv.write((char *)source_buffer, sizeof(source_buffer) - 1),
       nmq::ActualSizeLessThanExpectedSize);
 }

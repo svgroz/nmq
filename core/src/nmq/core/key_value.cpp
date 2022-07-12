@@ -28,7 +28,7 @@ inline void check_max_size(std::size_t actual) {
   }
 }
 
-inline auto init_array(char *source, std::size_t size) -> std::vector<char> {
+inline auto init_vector(char *source, std::size_t size) -> std::vector<char> {
   std::vector<char> result(size);
   std::memcpy(result.data(), source, size);
   return result;
@@ -41,15 +41,9 @@ inline auto size_of_inner_vector(std::size_t source_size) -> KeyValueHeader {
   return static_cast<KeyValueHeader>(source_size);
 }
 
-KeyValue::KeyValue(std::vector<char> key, bool has_key, std::vector<char> value,
-                   bool has_value)
-    : _key(std::move(key)), _has_key(has_key), _value(std::move(value)),
-      _has_value(has_value){};
-
 KeyValue::~KeyValue() = default;
 
-auto KeyValue::read(char *source, std::size_t size)
-    -> std::unique_ptr<KeyValue> {
+auto KeyValue::read(char *source, std::size_t size) -> KeyValue {
   if (source == nullptr) {
     throw std::invalid_argument("read: source is nullptr");
   }
@@ -66,15 +60,15 @@ auto KeyValue::read(char *source, std::size_t size)
   bool has_key = key_size > 0;
   bool has_value = value_size > 0;
   std::vector<char> key =
-      has_key ? init_array(source + KEY_VALUE_META_SIZE, key_size)
+      has_key ? init_vector(source + KEY_VALUE_META_SIZE, key_size)
               : std::vector<char>(0);
 
   std::vector<char> value =
       has_value > 0
-          ? init_array(source + KEY_VALUE_META_SIZE + key_size, value_size)
+          ? init_vector(source + KEY_VALUE_META_SIZE + key_size, value_size)
           : std::vector<char>(0);
 
-  return std::make_unique<KeyValue>(key, has_key, value, has_value);
+  return {key, has_key, value, has_value};
 }
 
 auto KeyValue::write(char *target, std::size_t size) -> void {
