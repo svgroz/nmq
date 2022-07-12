@@ -27,8 +27,9 @@ target_include_directories(
     PUBLIC
     include
 )
-#target_link_libraries(
-    #core 
-    #PUBLIC 
-    #Boost::log
-#)
+target_link_libraries(
+    core 
+    PUBLIC 
+    spdlog
+    fmt
+)
