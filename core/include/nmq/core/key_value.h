@@ -14,7 +14,7 @@ private:
 public:
   explicit ActualSizeLessThanMinSize(std::size_t actual_size)
       : _actual_size(actual_size){};
-  virtual ~ActualSizeLessThanMinSize() = default;
+  ~ActualSizeLessThanMinSize() override = default;
   auto actual_size() -> std::size_t { return _actual_size; }
 };
 
@@ -25,7 +25,7 @@ private:
 public:
   explicit ActualSizeHigherThanMinSize(std::size_t actual_size)
       : _actual_size(actual_size){};
-  virtual ~ActualSizeHigherThanMinSize() = default;
+  ~ActualSizeHigherThanMinSize() override = default;
   auto actual_size() -> std::size_t { return _actual_size; }
 };
 
@@ -38,7 +38,7 @@ public:
   ActualSizeLessThanExpectedSize(std::size_t actual_size,
                                  std::size_t expected_size)
       : _actual_size(actual_size), _expected_size(expected_size){};
-  virtual ~ActualSizeLessThanExpectedSize() = default;
+  ~ActualSizeLessThanExpectedSize() override = default;
   auto actual_size() -> std::size_t { return _actual_size; }
   auto expected_size() -> std::size_t { return _expected_size; }
 };
@@ -50,7 +50,7 @@ private:
 public:
   explicit ActualSizeHigherThanMaxSize(std::size_t actual_size)
       : _actual_size(actual_size){};
-  virtual ~ActualSizeHigherThanMaxSize() = default;
+  ~ActualSizeHigherThanMaxSize() override = default;
   auto actual_size() -> std::size_t { return _actual_size; }
 };
 
