@@ -30,7 +30,7 @@ inline void check_max_size(std::size_t actual) {
 
 inline auto init_vector(char *source, std::size_t size) -> std::vector<char> {
   std::vector<char> result(size);
-  std::memcpy(result.data(), source, size);
+  std::copy(source, source + size, result.data());
   return result;
 }
 
@@ -41,16 +41,17 @@ inline auto size_of_inner_vector(std::size_t source_size) -> KeyValueHeader {
   return static_cast<KeyValueHeader>(source_size);
 }
 
-KeyValue::~KeyValue() = default;
-
-auto KeyValue::read(char *source, std::size_t size) -> KeyValue {
+auto KeyValue::read(char *source, const std::size_t size) -> KeyValue {
   if (source == nullptr) {
     throw std::invalid_argument("read: source is nullptr");
   }
   check_min_size(size);
 
-  KeyValueHeader key_size = reinterpret_cast<KeyValueHeader *>(source)[0];
-  KeyValueHeader value_size = reinterpret_cast<KeyValueHeader *>(source)[1];
+  std::array<KeyValueHeader, 2> key_value_header;
+  std::memcpy(key_value_header.data(), source, KEY_VALUE_META_SIZE);
+
+  KeyValueHeader key_size = key_value_header[0];
+  KeyValueHeader value_size = key_value_header[1];
 
   std::size_t expected_size =
       KEY_VALUE_META_SIZE + std::max(key_size, 0) + std::max(value_size, 0);
@@ -58,13 +59,13 @@ auto KeyValue::read(char *source, std::size_t size) -> KeyValue {
   check_expected_size(expected_size, size);
 
   bool has_key = key_size > -1;
-  bool has_value = value_size > -1;
   std::vector<char> key =
-      key_size > -1 ? init_vector(source + KEY_VALUE_META_SIZE, key_size)
-                    : std::vector<char>(0);
+      key_size > 0 ? init_vector(source + KEY_VALUE_META_SIZE, key_size)
+                   : std::vector<char>(0);
 
+  bool has_value = value_size > -1;
   std::vector<char> value =
-      value_size > -1
+      value_size > 0
           ? init_vector(source + KEY_VALUE_META_SIZE + key_size, value_size)
           : std::vector<char>(0);
 
@@ -85,8 +86,9 @@ auto KeyValue::write(char *target, std::size_t size) -> void {
 
   check_expected_size(expected_size, size);
 
-  reinterpret_cast<KeyValueHeader *>(target)[0] = key_size;
-  reinterpret_cast<KeyValueHeader *>(target)[1] = value_size;
+  std::array<KeyValueHeader, 2> key_value_header = {key_size, value_size};
+  std::memcpy(target, key_value_header.data(), KEY_VALUE_META_SIZE);
+
   target = target + KEY_VALUE_META_SIZE;
 
   if (key_size > 0) {
