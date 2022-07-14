@@ -80,5 +80,7 @@
         "test",
         "--verbose",
         "--output-on-failure"
-    ]
+    ],
+    "C_Cpp.clang_format_fallbackStyle": "LLVM",
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true
 }

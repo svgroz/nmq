@@ -10,19 +10,19 @@ static const std::size_t KEY_VALUE_META_SIZE = sizeof(nmq::KeyValueHeader) * 2;
 static const KeyValueHeader MAX_KEY_VALUE_HEADER_VALUE =
     std::numeric_limits<KeyValueHeader>::max();
 
-inline void check_min_size(std::size_t actual) {
+void check_min_size(std::size_t actual) {
   if (KEY_VALUE_META_SIZE > actual) {
     throw ActualSizeLessThanMinSize(actual);
   }
 }
 
-inline void check_expected_size(std::size_t expected, std::size_t actual) {
+void check_expected_size(std::size_t expected, std::size_t actual) {
   if (actual < expected) {
     throw ActualSizeLessThanExpectedSize(actual, expected);
   }
 }
 
-inline void check_max_size(std::size_t actual) {
+void check_max_size(std::size_t actual) {
   if (actual > MAX_KEY_VALUE_HEADER_VALUE) {
     throw ActualSizeHigherThanMinSize(actual);
   }
