@@ -1,7 +1,7 @@
 #include <cstring>
 #include <limits>
-#include <stdexcept>
 
+#include <nmq/core/exceptions.h>
 #include <nmq/core/key_value.h>
 
 namespace nmq {
@@ -43,7 +43,7 @@ inline auto size_of_inner_vector(std::size_t source_size) -> KeyValueHeader {
 
 auto KeyValue::read(char *source, const std::size_t size) -> KeyValue {
   if (source == nullptr) {
-    throw std::invalid_argument("read: source is nullptr");
+    throw NullptrArgumentException("source");
   }
   check_min_size(size);
 
@@ -74,7 +74,7 @@ auto KeyValue::read(char *source, const std::size_t size) -> KeyValue {
 
 auto KeyValue::write(char *target, std::size_t size) -> void {
   if (target == nullptr) {
-    throw std::invalid_argument("target: source is nullptr");
+    throw NullptrArgumentException("target");
   }
   check_min_size(size);
 

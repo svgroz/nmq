@@ -16,6 +16,7 @@ target_sources(
     PUBLIC
     src/nmq/core/configuration.cpp 
     src/nmq/core/header.cpp
+    src/nmq/core/index.cpp
     src/nmq/core/key_value.cpp
     src/nmq/core/message.cpp
     src/nmq/core/partition.cpp 

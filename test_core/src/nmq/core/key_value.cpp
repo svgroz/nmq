@@ -2,6 +2,7 @@
 
 #include <cstring>
 
+#include <nmq/core/exceptions.h>
 #include <nmq/core/key_value.h>
 
 TEST(KeyValueTest, HappyPathReadKEmptyVEmpty) {
@@ -93,7 +94,7 @@ TEST(KeyValueTest, SadPathReadK) {
 }
 
 TEST(KeyValueTest, SadPathReadNullptr) {
-  EXPECT_THROW(nmq::KeyValue::read(nullptr, 0), std::invalid_argument);
+  EXPECT_THROW(nmq::KeyValue::read(nullptr, 0), nmq::NullptrArgumentException);
 }
 
 TEST(KeyValueTest, SadPathReadSmallThanKV) {
@@ -226,7 +227,7 @@ TEST(KeyValueTest, SadPathWriteNullBuffer) {
       nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   EXPECT_THROW(source_kv.write(nullptr, sizeof(source_buffer)),
-               std::invalid_argument);
+               nmq::NullptrArgumentException);
 }
 
 TEST(KeyValueTest, SadPathWriteSmallerThanNecesseryBuffer) {
