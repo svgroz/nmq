@@ -1,7 +1,7 @@
 #pragma once
 
+#include <cstdio>
 #include <filesystem>
-#include <fstream>
 #include <nmq/core/message.h>
 #include <nmq/core/partition_log.h>
 #include <string>
@@ -14,8 +14,8 @@ private:
 
 public:
   explicit Partition(const std::filesystem::path &path);
-  Partition(const Partition &) = delete;
+  Partition(Partition &&) = delete;
   virtual ~Partition();
-  auto add(const Message &message) -> std::uint64_t;
+  auto add(Message &message) -> std::uint64_t;
 };
 } // namespace nmq

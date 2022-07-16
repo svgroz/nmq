@@ -1,33 +1,48 @@
 #include <nmq/core/message.h>
 
+#include <limits>
+#include <nmq/core/exceptions.h>
+
 namespace nmq {
+
+static constexpr std::int64_t MAX_INT64_T =
+    std::numeric_limits<std::int64_t>().max();
 
 auto Message::add_header(KeyValue &header) -> void {
   _headers.emplace_back(std::move(header));
 }
 
-auto Message::size() -> std::size_t {
-  std::size_t result = _key_value.size();
+auto Message::size() -> std::int64_t {
+  std::size_t key_size = _key_value.size();
   std::size_t headers_size = _headers.size();
-  for (std::size_t i = 0; i < headers_size; i++) {
-    result = result + _headers[i].size();
+  std::size_t result = key_size + headers_size;
+  for (auto &header : _headers) {
+    result = result + header.size();
   }
-  return result;
+  if (result > MAX_INT64_T) {
+    throw ActualSizeHigherThanMaxSize(result, MAX_INT64_T);
+  }
+  return static_cast<std::int64_t>(result);
 };
 
 auto Message::read(char *source, std::size_t source_size) -> Message {
   KeyValue initial_key_value = KeyValue::read(source, source_size);
-  std::size_t offset = initial_key_value.size();
+  std::size_t size = initial_key_value.size();
   std::vector<KeyValue> headers = std::vector<KeyValue>();
-  while (offset < source_size) {
-    KeyValue key_value = KeyValue::read(source + offset, source_size - offset);
-    offset = offset + key_value.size();
+  while (size < source_size) {
+    KeyValue key_value = KeyValue::read(source + size, source_size - size);
+    size = size + key_value.size();
     headers.emplace_back(std::move(key_value));
   }
 
   return Message(std::move(initial_key_value), std::move(headers));
 }
 
-//TODO add write
+auto Message::write(char *target, std::size_t target_size) -> void {
+  std::size_t offset = _key_value.write(target, target_size);
+  for (auto &header : _headers) {
+    offset = offset + header.write(target + offset, target_size - offset);
+  }
+}
 
 } // namespace nmq

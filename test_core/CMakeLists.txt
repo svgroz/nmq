@@ -13,6 +13,7 @@ add_executable(
     key_value
     src/nmq/core/key_value.cpp
     src/nmq/core/message.cpp
+    src/nmq/core/partition_log.cpp
 )
 target_link_libraries(
     key_value

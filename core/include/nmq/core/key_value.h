@@ -31,7 +31,7 @@ public:
   auto has_value() noexcept { return _has_value; };
 
   static auto read(char *source, std::size_t size) -> KeyValue;
-  auto write(char *target, std::size_t size) -> void;
+  auto write(char *target, std::size_t size) -> std::size_t;
 
   auto size() noexcept -> std::size_t {
     return (sizeof(KeyValueHeader) * 2) + (_has_key ? _key.size() : 0) +

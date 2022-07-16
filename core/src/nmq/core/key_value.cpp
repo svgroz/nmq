@@ -6,8 +6,9 @@
 
 namespace nmq {
 
-static const std::size_t KEY_VALUE_META_SIZE = sizeof(nmq::KeyValueHeader) * 2;
-static const KeyValueHeader MAX_KEY_VALUE_HEADER_VALUE =
+static constexpr std::size_t KEY_VALUE_META_SIZE =
+    sizeof(nmq::KeyValueHeader) * 2;
+static constexpr KeyValueHeader MAX_KEY_VALUE_HEADER_VALUE =
     std::numeric_limits<KeyValueHeader>::max();
 
 void check_min_size(std::size_t actual) {
@@ -36,14 +37,14 @@ inline auto init_vector(char *source, std::size_t size) -> std::vector<char> {
 
 inline auto size_of_inner_vector(std::size_t source_size) -> KeyValueHeader {
   if (source_size > MAX_KEY_VALUE_HEADER_VALUE) {
-    throw ActualSizeHigherThanMaxSize(source_size);
+    throw ActualSizeHigherThanMaxSize(source_size, MAX_KEY_VALUE_HEADER_VALUE);
   }
   return static_cast<KeyValueHeader>(source_size);
 }
 
 auto KeyValue::read(char *source, const std::size_t size) -> KeyValue {
   if (source == nullptr) {
-    throw NullptrArgumentException("source");
+    throw NullptrArgumentException();
   }
   check_min_size(size);
 
@@ -72,9 +73,9 @@ auto KeyValue::read(char *source, const std::size_t size) -> KeyValue {
   return {key, has_key, value, has_value};
 }
 
-auto KeyValue::write(char *target, std::size_t size) -> void {
+auto KeyValue::write(char *target, std::size_t size) -> std::size_t {
   if (target == nullptr) {
-    throw NullptrArgumentException("target");
+    throw NullptrArgumentException();
   }
   check_min_size(size);
 
@@ -99,5 +100,7 @@ auto KeyValue::write(char *target, std::size_t size) -> void {
   if (value_size > 0) {
     std::memcpy(target, _value.data(), value_size);
   }
+
+  return KEY_VALUE_META_SIZE + key_size + value_size;
 }
 } // namespace nmq

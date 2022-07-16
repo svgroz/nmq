@@ -32,8 +32,8 @@ public:
   Topic(const std::filesystem::path &path, const std::string &name,
         const std::size_t partitions);
   Topic(const Topic &) = delete;
-  virtual ~Topic();
-  auto add(const Message &message) -> PartitionOffset;
+  virtual ~Topic() = default;
+  auto add(Message &message) -> PartitionOffset;
 };
 
 }; // namespace nmq

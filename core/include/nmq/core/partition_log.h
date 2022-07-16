@@ -1,19 +1,20 @@
 #pragma once
 
 #include <fstream>
-#include <mutex>
 
 #include <nmq/core/message.h>
 
 namespace nmq {
-class PartitionLog {
-private:
-  std::fstream _log_file;
+class PartitionLog final {
+ private:
+  std::string _filename;
+  std::fstream _file;
 
-public:
+ public:
   explicit PartitionLog(const std::string &filename);
-  PartitionLog(const PartitionLog &) = delete;
+  PartitionLog(PartitionLog &&) = default;
   virtual ~PartitionLog();
-  auto add(const Message &message) -> std::uint64_t;
+  auto push_back(Message &message) -> std::uint64_t;
+  auto read(std::size_t position, std::size_t size) -> Message;
 };
 } // namespace nmq

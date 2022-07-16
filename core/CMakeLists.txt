@@ -7,7 +7,7 @@ if (MSVC)
     add_compile_options(/W4 /WX)
 else()
     # lots of warnings and all warnings as errors
-    add_compile_options(-Wall -Wextra -pedantic -Werror)
+  #  add_compile_options(-Wall -Wextra -pedantic -Werror)
 endif()
 
 add_library(core SHARED)
@@ -16,7 +16,7 @@ target_sources(
     PUBLIC
     src/nmq/core/configuration.cpp 
     src/nmq/core/header.cpp
-    src/nmq/core/index.cpp
+    src/nmq/core/index_chunk.cpp
     src/nmq/core/key_value.cpp
     src/nmq/core/message.cpp
     src/nmq/core/partition.cpp 

@@ -7,21 +7,16 @@
 
 namespace nmq {
 class NullptrArgumentException final : std::exception {
-private:
-  const std::string _argument_name;
-
-public:
-  explicit NullptrArgumentException(std::string argument_name)
-      : _argument_name(std::move(argument_name)){};
+ public:
+  NullptrArgumentException() = default;
   ~NullptrArgumentException() override = default;
-  auto argument_name() { return std::string_view(_argument_name); }
 };
 
 class ActualSizeLessThanMinSize final : std::exception {
-private:
+ private:
   const std::size_t _actual_size;
 
-public:
+ public:
   explicit ActualSizeLessThanMinSize(std::size_t actual_size)
       : _actual_size(actual_size){};
   ~ActualSizeLessThanMinSize() override = default;
@@ -29,10 +24,10 @@ public:
 };
 
 class ActualSizeHigherThanMinSize final : std::exception {
-private:
+ private:
   const std::size_t _actual_size;
 
-public:
+ public:
   explicit ActualSizeHigherThanMinSize(std::size_t actual_size)
       : _actual_size(actual_size){};
   ~ActualSizeHigherThanMinSize() override = default;
@@ -40,11 +35,11 @@ public:
 };
 
 class ActualSizeLessThanExpectedSize final : std::exception {
-private:
+ private:
   const std::size_t _actual_size;
   const std::size_t _expected_size;
 
-public:
+ public:
   ActualSizeLessThanExpectedSize(std::size_t actual_size,
                                  std::size_t expected_size)
       : _actual_size(actual_size), _expected_size(expected_size){};
@@ -54,14 +49,26 @@ public:
 };
 
 class ActualSizeHigherThanMaxSize final : std::exception {
-private:
+ private:
   const std::size_t _actual_size;
+  const std::size_t _max_size;
 
-public:
-  explicit ActualSizeHigherThanMaxSize(std::size_t actual_size)
-      : _actual_size(actual_size){};
+ public:
+  ActualSizeHigherThanMaxSize(std::size_t actual_size, std::size_t max_size)
+      : _actual_size(actual_size), _max_size(max_size){};
   ~ActualSizeHigherThanMaxSize() override = default;
   auto actual_size() { return _actual_size; }
+  auto max_size() { return _max_size; }
+};
+
+class CouldNotOpenFile final : std::exception {
+ private:
+  const std::string _filename;
+
+ public:
+  explicit CouldNotOpenFile(std::string &filename) : _filename(filename){};
+  ~CouldNotOpenFile() override = default;
+  auto filename() { return _filename; };
 };
 
 } // namespace nmq

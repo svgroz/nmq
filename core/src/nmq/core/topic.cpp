@@ -15,9 +15,7 @@ Topic::Topic(const std::filesystem::path &path, const std::string &name,
   }
 };
 
-Topic::~Topic() = default;
-
-auto Topic::add(const Message &message) -> PartitionOffset {
+auto Topic::add(Message &message) -> PartitionOffset {
   (void)_key_hasher;
   std::uint64_t partition_by_key = _distribution(_random_engine);
 
