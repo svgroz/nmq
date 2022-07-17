@@ -3,7 +3,7 @@
 #include <limits>
 #include <nmq/core/exceptions.h>
 
-namespace nmq {
+namespace nmq::message {
 
 static constexpr std::int64_t MAX_INT64_T =
     std::numeric_limits<std::int64_t>().max();

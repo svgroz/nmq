@@ -5,7 +5,7 @@
 #include <memory>
 #include <nmq/core/key_value.h>
 
-namespace nmq {
+namespace nmq::message {
 
 class Message final {
  private:
@@ -26,4 +26,4 @@ class Message final {
   static auto read(char *source, std::size_t source_size) -> Message;
   auto write(char *target, std::size_t target_size) -> void;
 };
-} // namespace nmq
+} // namespace nmq::message

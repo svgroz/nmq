@@ -16,6 +16,6 @@ class Partition {
   explicit Partition(const std::filesystem::path &path);
   Partition(Partition &&) = delete;
   virtual ~Partition() = default;
-  auto push_back(Message &message) -> std::uint64_t;
+  auto push_back(message::Message &message) -> index_chunk::position_t;
 };
 } // namespace nmq::partition

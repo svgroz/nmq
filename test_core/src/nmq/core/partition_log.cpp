@@ -14,6 +14,6 @@ TEST(PartitionLog, PushBackHappyPath) {
   std::vector<char> value_data(value_value.begin(), value_value.end());
   key_value::KeyValue kv = {key_data, true, value_data, true};
   std::vector<key_value::KeyValue> headers = {};
-  Message message = Message(std::move(kv), std::move(headers));
+  auto message = message::Message(std::move(kv), std::move(headers));
   partition_log.push_back(message);
 }

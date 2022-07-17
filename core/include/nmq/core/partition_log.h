@@ -15,8 +15,8 @@ class PartitionLog final {
   explicit PartitionLog(const std::string &filename);
   PartitionLog(PartitionLog &&) = delete;
   virtual ~PartitionLog();
-  auto push_back(Message &message) -> index_chunk::position_t;
+  auto push_back(message::Message &message) -> index_chunk::position_t;
   auto read(index_chunk::position_t position, index_chunk::size_t size)
-      -> Message;
+      -> message::Message;
 };
 } // namespace nmq::partition_log

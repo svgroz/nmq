@@ -33,7 +33,7 @@ class Topic {
         const std::size_t partitions);
   Topic(const Topic &) = delete;
   virtual ~Topic() = default;
-  auto add(Message &message) -> PartitionOffset;
+  auto add(message::Message &message) -> PartitionOffset;
 };
 
 }; // namespace nmq
