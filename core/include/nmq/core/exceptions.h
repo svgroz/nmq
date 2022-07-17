@@ -5,60 +5,37 @@
 #include <memory>
 #include <string>
 
-namespace nmq {
+namespace nmq::exception {
 class NullptrArgumentException final : std::exception {
  public:
   NullptrArgumentException() = default;
   ~NullptrArgumentException() override = default;
 };
 
-class ActualSizeLessThanMinSize final : std::exception {
+class ActualLessThanExpected final : std::exception {
  private:
-  const std::size_t _actual_size;
+  const std::int64_t _actual;
+  const std::int64_t _expected;
 
  public:
-  explicit ActualSizeLessThanMinSize(std::size_t actual_size)
-      : _actual_size(actual_size){};
-  ~ActualSizeLessThanMinSize() override = default;
-  auto actual_size() noexcept { return _actual_size; }
+  ActualLessThanExpected(std::int64_t actual, std::int64_t expected)
+      : _actual(actual), _expected(expected){};
+  ~ActualLessThanExpected() override = default;
+  auto actual() noexcept { return _actual; }
+  auto expected() noexcept { return _expected; }
 };
 
-class ActualSizeHigherThanMinSize final : std::exception {
+class ActualHigherThanExpected final : std::exception {
  private:
-  const std::size_t _actual_size;
+  const std::int64_t _actual;
+  const std::int64_t _expected;
 
  public:
-  explicit ActualSizeHigherThanMinSize(std::size_t actual_size)
-      : _actual_size(actual_size){};
-  ~ActualSizeHigherThanMinSize() override = default;
-  auto actual_size() noexcept { return _actual_size; }
-};
-
-class ActualSizeLessThanExpectedSize final : std::exception {
- private:
-  const std::size_t _actual_size;
-  const std::size_t _expected_size;
-
- public:
-  ActualSizeLessThanExpectedSize(std::size_t actual_size,
-                                 std::size_t expected_size)
-      : _actual_size(actual_size), _expected_size(expected_size){};
-  ~ActualSizeLessThanExpectedSize() override = default;
-  auto actual_size() noexcept { return _actual_size; }
-  auto expected_size() noexcept { return _expected_size; }
-};
-
-class ActualSizeHigherThanMaxSize final : std::exception {
- private:
-  const std::size_t _actual_size;
-  const std::size_t _max_size;
-
- public:
-  ActualSizeHigherThanMaxSize(std::size_t actual_size, std::size_t max_size)
-      : _actual_size(actual_size), _max_size(max_size){};
-  ~ActualSizeHigherThanMaxSize() override = default;
-  auto actual_size() { return _actual_size; }
-  auto max_size() { return _max_size; }
+  ActualHigherThanExpected(std::int64_t actual, std::int64_t expected)
+      : _actual(actual), _expected(expected){};
+  ~ActualHigherThanExpected() override = default;
+  auto actual() { return _actual; }
+  auto expected() { return _expected; }
 };
 
 class CouldNotOpenFile final : std::exception {
@@ -71,4 +48,4 @@ class CouldNotOpenFile final : std::exception {
   auto filename() { return _filename; };
 };
 
-} // namespace nmq
+} // namespace nmq::exception

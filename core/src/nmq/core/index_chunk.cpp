@@ -4,27 +4,38 @@
 #include <array>
 #include <cstring>
 
-namespace nmq {
+namespace nmq::index_chunk {
 auto validate_buffer(char *source, std::size_t size) {
   if (source == nullptr) {
-    throw NullptrArgumentException();
+    throw nmq::exception::NullptrArgumentException();
   }
 
   if (size < INDEX_CHUNK_SIZE) {
-    throw ActualSizeLessThanExpectedSize(size, INDEX_CHUNK_SIZE);
+    throw nmq::exception::ActualLessThanExpected(size, INDEX_CHUNK_SIZE);
   }
 }
 
 auto IndexChunk::read(char *source, std::size_t size) -> IndexChunk {
   validate_buffer(source, size);
-  std::array<index_chunk_field, 3> index_data = {0, 0, 0};
-  std::memcpy(index_data.data(), source, INDEX_CHUNK_SIZE);
-  return {index_data[0], index_data[1], index_data[2]};
+  std::array<char, INDEX_CHUNK_SIZE> index_data = {};
+  offset_t offset = 0;
+  std::memcpy(index_data.data(), &offset, sizeof(offset));
+
+  position_t position = 0;
+  std::memcpy(index_data.data() + sizeof(offset), &position, sizeof(position));
+
+  size_t message_size = 0;
+  std::memcpy(index_data.data() + sizeof(offset) + sizeof(position),
+              &message_size, sizeof(message_size));
+
+  return {offset, position, message_size};
 }
 
 auto IndexChunk::write(char *target, std::size_t size) -> void {
   validate_buffer(target, size);
-  std::array<index_chunk_field, 3> index_data = {_offset, _position, _size};
-  std::memcpy(target, index_data.data(), INDEX_CHUNK_SIZE);
+  std::memcpy(target, &_offset, sizeof(_offset));
+  std::memcpy(target + sizeof(_offset), &_position, sizeof(_position));
+  std::memcpy(target + sizeof(_offset) + sizeof(_position), &_size,
+              sizeof(_size));
 }
 } // namespace nmq

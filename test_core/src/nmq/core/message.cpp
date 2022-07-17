@@ -3,7 +3,7 @@
 #include <nmq/core/message.h>
 
 TEST(MessageTest, HappyPathReadEmptyNull) {
-  nmq::KeyValueHeader sourse_buffer[] = {0, -1};
+  nmq::key_value::key_value_t sourse_buffer[] = {0, -1};
 
   nmq::Message message =
       nmq::Message::read((char *)sourse_buffer, sizeof(sourse_buffer));

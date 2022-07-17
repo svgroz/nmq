@@ -2,9 +2,10 @@
 
 #include <fstream>
 
+#include <nmq/core/index_chunk.h>
 #include <nmq/core/message.h>
 
-namespace nmq {
+namespace nmq::partition_log {
 class PartitionLog final {
  private:
   std::string _filename;
@@ -12,9 +13,10 @@ class PartitionLog final {
 
  public:
   explicit PartitionLog(const std::string &filename);
-  PartitionLog(PartitionLog &&) = default;
+  PartitionLog(PartitionLog &&) = delete;
   virtual ~PartitionLog();
-  auto push_back(Message &message) -> std::uint64_t;
-  auto read(std::size_t position, std::size_t size) -> Message;
+  auto push_back(Message &message) -> index_chunk::position_t;
+  auto read(index_chunk::position_t position, index_chunk::size_t size)
+      -> Message;
 };
-} // namespace nmq
+} // namespace nmq::partition_log

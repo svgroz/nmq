@@ -8,7 +8,7 @@ namespace nmq {
 static constexpr std::int64_t MAX_INT64_T =
     std::numeric_limits<std::int64_t>().max();
 
-auto Message::add_header(KeyValue &header) -> void {
+auto Message::add_header(key_value::KeyValue &header) -> void {
   _headers.emplace_back(std::move(header));
 }
 
@@ -20,17 +20,17 @@ auto Message::size() -> std::int64_t {
     result = result + header.size();
   }
   if (result > MAX_INT64_T) {
-    throw ActualSizeHigherThanMaxSize(result, MAX_INT64_T);
+    throw exception::ActualHigherThanExpected(result, MAX_INT64_T);
   }
   return static_cast<std::int64_t>(result);
 };
 
 auto Message::read(char *source, std::size_t source_size) -> Message {
-  KeyValue initial_key_value = KeyValue::read(source, source_size);
+  auto initial_key_value = key_value::KeyValue::read(source, source_size);
   std::size_t size = initial_key_value.size();
-  std::vector<KeyValue> headers = std::vector<KeyValue>();
+  auto headers = std::vector<key_value::KeyValue>();
   while (size < source_size) {
-    KeyValue key_value = KeyValue::read(source + size, source_size - size);
+    auto key_value = key_value::KeyValue::read(source + size, source_size - size);
     size = size + key_value.size();
     headers.emplace_back(std::move(key_value));
   }

@@ -1,20 +1,24 @@
 #pragma once
 
 #include <cstdint>
+#include <ios>
 
-namespace nmq {
-using index_chunk_field = std::int64_t;
-static constexpr std::size_t INDEX_CHUNK_SIZE = sizeof(index_chunk_field) * 3;
+namespace nmq::index_chunk {
+using offset_t = std::size_t;
+using position_t = std::streampos;
+using size_t = std::streampos;
+
+static constexpr std::size_t INDEX_CHUNK_SIZE =
+    sizeof(std::streampos) + (sizeof(std::size_t) * 2);
 
 class IndexChunk final {
  private:
-  const index_chunk_field _offset;
-  const index_chunk_field _position;
-  const index_chunk_field _size;
+  const offset_t _offset;
+  const position_t _position;
+  const size_t _size;
 
  public:
-  IndexChunk(index_chunk_field offset, index_chunk_field position,
-             index_chunk_field size) noexcept
+  IndexChunk(offset_t offset, position_t position, size_t size) noexcept
       : _offset(offset), _position(position), _size(size){};
   IndexChunk(IndexChunk &&) = default;
   virtual ~IndexChunk() = default;
@@ -28,4 +32,4 @@ class IndexChunk final {
 
   auto size() noexcept { return _size; }
 };
-} // namespace nmq
+} // namespace nmq::index_chunk

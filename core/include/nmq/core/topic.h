@@ -22,13 +22,13 @@ using PartitionOffset = struct {
 };
 
 class Topic {
-private:
+ private:
   std::hash<std::string_view> _key_hasher;
   std::default_random_engine _random_engine;
   std::uniform_int_distribution<uint64_t> _distribution;
-  std::vector<std::unique_ptr<Partition>> _partitions;
+  std::vector<std::unique_ptr<partition::Partition>> _partitions;
 
-public:
+ public:
   Topic(const std::filesystem::path &path, const std::string &name,
         const std::size_t partitions);
   Topic(const Topic &) = delete;

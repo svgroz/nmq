@@ -6,16 +6,16 @@
 #include <nmq/core/partition_log.h>
 #include <string>
 
-namespace nmq {
+namespace nmq::partition {
 class Partition {
-private:
-  PartitionLog _partition_log;
+ private:
+  partition_log::PartitionLog _partition_log;
   std::mutex _partition_mutex;
 
-public:
+ public:
   explicit Partition(const std::filesystem::path &path);
   Partition(Partition &&) = delete;
-  virtual ~Partition();
-  auto add(Message &message) -> std::uint64_t;
+  virtual ~Partition() = default;
+  auto push_back(Message &message) -> std::uint64_t;
 };
-} // namespace nmq
+} // namespace nmq::partition
