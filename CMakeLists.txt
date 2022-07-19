@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(spdlog REQUIRED)
 find_package(fmt REQUIRED)
+find_package(Boost REQUIRED)
 
 add_subdirectory(core)
 if (BUILD_TESTING)

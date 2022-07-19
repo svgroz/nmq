@@ -10,16 +10,17 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 add_executable(
-    key_value
-    src/nmq/core/key_value.cpp
-    src/nmq/core/message.cpp
-    src/nmq/core/partition_log.cpp
+    test_core
+    src/nmq/core/index_log.cpp
+    #src/nmq/core/key_value.cpp
+    #src/nmq/core/message.cpp
+    #src/nmq/core/partition_log.cpp
 )
 target_link_libraries(
-    key_value
+    test_core
     core
     gtest_main
 )
 
 include(GoogleTest)
-gtest_discover_tests(key_value)
+gtest_discover_tests(test_core)

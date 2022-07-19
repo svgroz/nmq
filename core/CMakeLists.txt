@@ -14,7 +14,6 @@ add_library(core SHARED)
 target_sources(
     core
     PUBLIC
-    src/nmq/core/index_chunk.cpp
     src/nmq/core/index_log.cpp
     src/nmq/core/key_value.cpp
     src/nmq/core/message.cpp
