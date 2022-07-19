@@ -5,19 +5,19 @@
 #include <memory>
 #include <string>
 
-namespace nmq::exception {
+namespace nmq {
 class NullptrArgumentException final : std::exception {
- public:
+public:
   NullptrArgumentException() = default;
   ~NullptrArgumentException() override = default;
 };
 
 class ActualLessThanExpected final : std::exception {
- private:
+private:
   const std::int64_t _actual;
   const std::int64_t _expected;
 
- public:
+public:
   ActualLessThanExpected(std::int64_t actual, std::int64_t expected)
       : _actual(actual), _expected(expected){};
   ~ActualLessThanExpected() override = default;
@@ -26,11 +26,11 @@ class ActualLessThanExpected final : std::exception {
 };
 
 class ActualHigherThanExpected final : std::exception {
- private:
+private:
   const std::int64_t _actual;
   const std::int64_t _expected;
 
- public:
+public:
   ActualHigherThanExpected(std::int64_t actual, std::int64_t expected)
       : _actual(actual), _expected(expected){};
   ~ActualHigherThanExpected() override = default;
@@ -39,13 +39,13 @@ class ActualHigherThanExpected final : std::exception {
 };
 
 class CouldNotOpenFile final : std::exception {
- private:
+private:
   const std::string _filename;
 
- public:
+public:
   explicit CouldNotOpenFile(std::string &filename) : _filename(filename){};
   ~CouldNotOpenFile() override = default;
   auto filename() { return _filename; };
 };
 
-} // namespace nmq::exception
+} // namespace nmq

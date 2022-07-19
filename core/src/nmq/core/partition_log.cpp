@@ -5,7 +5,7 @@
 
 #include <spdlog/spdlog.h>
 
-namespace nmq::partition_log {
+namespace nmq {
 PartitionLog::PartitionLog(const std::string &filename) : _filename(filename) {
   spdlog::info("trying to open the file: {}", filename);
   _file = std::fstream(_filename, std::fstream::in | std::fstream::out |
@@ -14,7 +14,7 @@ PartitionLog::PartitionLog(const std::string &filename) : _filename(filename) {
     spdlog::info("file successfully opened: {}", _filename);
   } else {
     spdlog::error("could not open the file: {}", _filename);
-    throw exception::CouldNotOpenFile(_filename);
+    throw CouldNotOpenFile(_filename);
   }
 };
 
@@ -28,7 +28,7 @@ PartitionLog::~PartitionLog() {
   }
 };
 
-auto PartitionLog::push_back(message::Message &message) -> index_chunk::position_t {
+auto PartitionLog::push_back(Message &message) -> position_t {
   std::int64_t message_size = message.size();
   auto buffer = std::make_unique<std::vector<char>>(message_size);
   message.write(buffer->data(), message_size);
@@ -38,12 +38,11 @@ auto PartitionLog::push_back(message::Message &message) -> index_chunk::position
   return current_position + message_size;
 }
 
-auto PartitionLog::read(index_chunk::position_t position,
-                        index_chunk::size_t size) -> message::Message {
+auto PartitionLog::read(position_t position, size_t size) -> Message {
   auto buffer = std::make_unique<std::vector<char>>(size);
   _file.seekg(position);
   _file.read(buffer->data(), size);
-  return message::Message::read(buffer->data(), size);
+  return read(buffer->data(), size);
 }
 
-} // namespace nmq::partition_log
+} // namespace nmq

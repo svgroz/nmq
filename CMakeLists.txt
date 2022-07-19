@@ -11,4 +11,6 @@ find_package(spdlog REQUIRED)
 find_package(fmt REQUIRED)
 
 add_subdirectory(core)
-add_subdirectory(test_core)
+if (BUILD_TESTING)
+    add_subdirectory(test_core)
+endif()

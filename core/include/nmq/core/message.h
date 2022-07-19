@@ -4,26 +4,23 @@
 
 #include <memory>
 #include <nmq/core/key_value.h>
+#include <nmq/core/types.h>
 
-namespace nmq::message {
+namespace nmq {
 
 class Message final {
- private:
-  key_value::KeyValue _key_value;
-  std::vector<key_value::KeyValue> _headers;
+private:
+  std::vector<KeyValue> _headers;
 
- public:
-  Message(key_value::KeyValue key_value,
-          std::vector<key_value::KeyValue> headers)
-      : _key_value(std::move(key_value)), _headers(std::move(headers)){};
+public:
+  explicit Message(std::vector<KeyValue> &headers)
+      : _headers(std::move(headers)){};
   Message(const Message &) = delete;
-  Message(Message &&message) noexcept
-      : _key_value(std::move(message._key_value)),
-        _headers(std::move(message._headers)){};
+  Message(Message &&message) = default;
   virtual ~Message() = default;
-  auto add_header(key_value::KeyValue &header) -> void;
-  auto size() -> std::int64_t;
+  auto add_header(KeyValue &header) -> void;
+  auto size() -> message_size_t;
   static auto read(char *source, std::size_t source_size) -> Message;
   auto write(char *target, std::size_t target_size) -> void;
 };
-} // namespace nmq::message
+} // namespace nmq

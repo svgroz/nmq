@@ -3,24 +3,28 @@
 #include <nmq/core/exceptions.h>
 #include <nmq/core/key_value.h>
 
-namespace nmq::key_value {
+namespace nmq {
 
-void check_min_size(std::size_t actual) {
-  if (actual < KEY_VALUE_HEADER_SIZE) {
-    throw exception::ActualLessThanExpected(actual, KEY_VALUE_HEADER_SIZE);
-  }
-}
+static constexpr std::size_t KEY_VALUE_HEADER_CHUNK_MAX_SIZE =
+    std::numeric_limits<key_value_t>().max();
+
+static constexpr std::size_t KEY_VALUE_HEADER_SIZE = sizeof(key_value_t) * 2;
 
 void check_expected_size(std::size_t expected, std::size_t actual) {
   if (actual < expected) {
-    throw exception::ActualLessThanExpected(actual, expected);
+    throw ActualLessThanExpected(actual, expected);
+  }
+}
+
+void check_min_size(std::size_t actual) {
+  if (actual < KEY_VALUE_HEADER_SIZE) {
+    throw ActualLessThanExpected(actual, KEY_VALUE_HEADER_SIZE);
   }
 }
 
 void check_max_size(std::size_t actual) {
   if (actual > KEY_VALUE_HEADER_CHUNK_MAX_SIZE) {
-    throw exception::ActualHigherThanExpected(actual,
-                                              KEY_VALUE_HEADER_CHUNK_MAX_SIZE);
+    throw ActualHigherThanExpected(actual, KEY_VALUE_HEADER_CHUNK_MAX_SIZE);
   }
 }
 
@@ -32,15 +36,15 @@ inline auto init_vector(char *source, std::size_t size) -> std::vector<char> {
 
 auto size_of_inner_vector(std::size_t source_size) {
   if (source_size > KEY_VALUE_HEADER_CHUNK_MAX_SIZE) {
-    throw exception::ActualHigherThanExpected(source_size,
-                                              KEY_VALUE_HEADER_CHUNK_MAX_SIZE);
+    throw ActualHigherThanExpected(source_size,
+                                   KEY_VALUE_HEADER_CHUNK_MAX_SIZE);
   }
   return static_cast<key_value_t>(source_size);
 }
 
 auto KeyValue::read(char *source, const std::size_t size) -> KeyValue {
   if (source == nullptr) {
-    throw exception::NullptrArgumentException();
+    throw NullptrArgumentException();
   }
   check_min_size(size);
 
@@ -71,7 +75,7 @@ auto KeyValue::read(char *source, const std::size_t size) -> KeyValue {
 
 auto KeyValue::write(char *target, std::size_t size) -> std::size_t {
   if (target == nullptr) {
-    throw exception::NullptrArgumentException();
+    throw NullptrArgumentException();
   }
   check_min_size(size);
 
@@ -100,4 +104,8 @@ auto KeyValue::write(char *target, std::size_t size) -> std::size_t {
 
   return KEY_VALUE_HEADER_SIZE + key_size + value_size;
 }
-} // namespace nmq::key_value
+auto KeyValue::size() noexcept -> std::size_t {
+  return KEY_VALUE_HEADER_SIZE + (_has_key ? _key.size() : 0) +
+         (_has_value ? _value.size() : 0);
+};
+} // namespace nmq

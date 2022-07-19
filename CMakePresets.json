@@ -3,14 +3,15 @@
     "configurePresets": [
         {
             "name": "clang",
-            "displayName": "Clang 14.0.0 x86_64-pc-linux-gnu",
-            "description": "Using compilers: C = /usr/bin/clang, CXX = /usr/bin/clang++",
+            "displayName": "",
+            "description": "",
             "generator": "Unix Makefiles",
             "binaryDir": "${workspaceFolder}/build/",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TESTING": false
             },
             "debug": {
                 "output": false
@@ -18,17 +19,40 @@
         },
         {
             "name": "gcc",
-            "displayName": "GCC 11.2 x86_64-pc-linux-gnu",
-            "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
+            "displayName": "",
+            "description": "",
             "generator": "Unix Makefiles",
             "binaryDir": "${workspaceFolder}/build/",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "gcc",
                 "CMAKE_CXX_COMPILER": "g++",
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TESTING": false
             },
             "debug": {
                 "output": false
+            }
+        },
+        {
+            "name": "clang with test",
+            "description": "",
+            "displayName": "",
+            "inherits": [
+                "clang"
+            ],
+            "cacheVariables": {
+                "BUILD_TESTING": true
+            }
+        },
+        {
+            "name": "gcc with test",
+            "description": "",
+            "displayName": "",
+            "inherits": [
+                "gcc"
+            ],
+            "cacheVariables": {
+                "BUILD_TESTING": true
             }
         }
     ]

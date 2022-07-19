@@ -6,14 +6,9 @@
 #include <memory>
 #include <vector>
 
-namespace nmq::key_value {
+namespace nmq {
 
 using key_value_t = std::int32_t;
-
-static constexpr std::size_t KEY_VALUE_HEADER_CHUNK_MAX_SIZE =
-    std::numeric_limits<key_value_t>().max();
-
-static constexpr std::size_t KEY_VALUE_HEADER_SIZE = sizeof(key_value_t) * 2;
 
 class KeyValue final {
  private:
@@ -31,18 +26,15 @@ class KeyValue final {
   KeyValue(KeyValue &&) = default;
   virtual ~KeyValue() = default;
 
-  auto key_size() { return _key.size(); };
+  auto key_size() noexcept { return _key.size(); };
   auto has_key() noexcept { return _has_key; };
-  auto value_size() { return _value.size(); };
+  auto value_size() noexcept { return _value.size(); };
   auto has_value() noexcept { return _has_value; };
 
   static auto read(char *source, std::size_t size) -> KeyValue;
   auto write(char *target, std::size_t size) -> std::size_t;
 
-  auto size() noexcept -> std::size_t {
-    return KEY_VALUE_HEADER_SIZE + (_has_key ? _key.size() : 0) +
-           (_has_value ? _value.size() : 0);
-  };
+  auto size() noexcept -> std::size_t;
 };
 
-} // namespace nmq::key_value
+} // namespace nmq

@@ -7,9 +7,9 @@
 
 TEST(KeyValueTest, HappyPathReadKEmptyVEmpty) {
 
-  nmq::key_value::key_value_t source_buffer[] = {0, 0};
+  nmq::key_value_t source_buffer[] = {0, 0};
 
-  auto kv = nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+  auto kv = nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   EXPECT_EQ(kv.has_key(), true);
   EXPECT_EQ(kv.key_size(), 0);
@@ -19,9 +19,9 @@ TEST(KeyValueTest, HappyPathReadKEmptyVEmpty) {
 
 TEST(KeyValueTest, HappyPathReadKNullVNull) {
 
-  nmq::key_value::key_value_t source_buffer[] = {-1, -1};
+  nmq::key_value_t source_buffer[] = {-1, -1};
 
-  auto kv = nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+  auto kv = nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   EXPECT_EQ(kv.has_key(), false);
   EXPECT_EQ(kv.key_size(), 0);
@@ -31,9 +31,9 @@ TEST(KeyValueTest, HappyPathReadKNullVNull) {
 
 TEST(KeyValueTest, HappyPathReadKVNull) {
 
-  nmq::key_value::key_value_t source_buffer[] = {sizeof(nmq::key_value::key_value_t), -1, -1};
+  nmq::key_value_t source_buffer[] = {sizeof(nmq::key_value_t), -1, -1};
 
-  auto kv = nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+  auto kv = nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   EXPECT_EQ(kv.has_key(), true);
   EXPECT_EQ(kv.key_size(), 4);
@@ -43,9 +43,9 @@ TEST(KeyValueTest, HappyPathReadKVNull) {
 
 TEST(KeyValueTest, HappyPathReadKNullV) {
 
-  nmq::key_value::key_value_t source_buffer[] = {-1, sizeof(nmq::key_value::key_value_t), 0};
+  nmq::key_value_t source_buffer[] = {-1, sizeof(nmq::key_value_t), 0};
 
-  auto kv = nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+  auto kv = nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   EXPECT_EQ(kv.has_key(), false);
   EXPECT_EQ(kv.key_size(), 0);
@@ -55,13 +55,12 @@ TEST(KeyValueTest, HappyPathReadKNullV) {
 
 TEST(KeyValueTest, HappyPathReadKNullVLarge) {
   std::size_t source_buffer_size = sizeof(char) * 1024 * 1024 * 64; // 64mb
-  std::size_t value_size =
-      source_buffer_size - (sizeof(nmq::key_value::key_value_t) * 2);
+  std::size_t value_size = source_buffer_size - (sizeof(nmq::key_value_t) * 2);
   char *raw_source_buffer = new char[source_buffer_size];
-  ((nmq::key_value::key_value_t *)raw_source_buffer)[0] = 0;
-  ((nmq::key_value::key_value_t *)raw_source_buffer)[1] = value_size;
+  ((nmq::key_value_t *)raw_source_buffer)[0] = 0;
+  ((nmq::key_value_t *)raw_source_buffer)[1] = value_size;
 
-  auto kv = nmq::key_value::KeyValue::read(raw_source_buffer, source_buffer_size);
+  auto kv = nmq::KeyValue::read(raw_source_buffer, source_buffer_size);
 
   delete[] raw_source_buffer;
 
@@ -74,10 +73,10 @@ TEST(KeyValueTest, HappyPathReadKNullVLarge) {
 
 TEST(KeyValueTest, HappyPathReadKV) {
 
-  nmq::key_value::key_value_t source_buffer[] = {sizeof(nmq::key_value::key_value_t),
-                                         sizeof(nmq::key_value::key_value_t), 1, 1};
+  nmq::key_value_t source_buffer[] = {sizeof(nmq::key_value_t),
+                                      sizeof(nmq::key_value_t), 1, 1};
 
-  auto kv = nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+  auto kv = nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   EXPECT_EQ(kv.has_key(), true);
   EXPECT_EQ(kv.key_size(), 4);
@@ -86,56 +85,55 @@ TEST(KeyValueTest, HappyPathReadKV) {
 }
 
 TEST(KeyValueTest, SadPathReadK) {
-  nmq::key_value::key_value_t source_buffer[1];
+  nmq::key_value_t source_buffer[1];
 
   EXPECT_THROW(
-      nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer)),
-      nmq::exception::ActualLessThanExpected);
+      nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer)),
+      nmq::ActualLessThanExpected);
 }
 
 TEST(KeyValueTest, SadPathReadNullptr) {
-  EXPECT_THROW(nmq::key_value::KeyValue::read(nullptr, 0),
-               nmq::exception::NullptrArgumentException);
+  EXPECT_THROW(nmq::KeyValue::read(nullptr, 0), nmq::NullptrArgumentException);
 }
 
 TEST(KeyValueTest, SadPathReadSmallThanKV) {
-  nmq::key_value::key_value_t source_buffer[1];
+  nmq::key_value_t source_buffer[1];
 
   EXPECT_THROW(
-      nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer)),
-      nmq::exception::ActualLessThanExpected);
+      nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer)),
+      nmq::ActualLessThanExpected);
 }
 
 TEST(KeyValueTest, SadPathReadKBiggerVOk) {
-  nmq::key_value::key_value_t source_buffer[] = {100, 0};
+  nmq::key_value_t source_buffer[] = {100, 0};
 
   EXPECT_THROW(
-      nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer)),
-      nmq::exception::ActualLessThanExpected);
+      nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer)),
+      nmq::ActualLessThanExpected);
 }
 
 TEST(KeyValueTest, SadPathReadKOkVBigger) {
-  nmq::key_value::key_value_t source_buffer[] = {0, 100};
+  nmq::key_value_t source_buffer[] = {0, 100};
 
   EXPECT_THROW(
-      nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer)),
-      nmq::exception::ActualLessThanExpected);
+      nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer)),
+      nmq::ActualLessThanExpected);
 }
 
 //-------------------------------------------------------------------------------
 
 TEST(KeyValueTest, HappyPathWriteEmptyKV) {
-  nmq::key_value::key_value_t source_buffer[] = {0, 0};
+  nmq::key_value_t source_buffer[] = {0, 0};
 
   auto source_kv =
-      nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+      nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   char target_buffer[sizeof(source_buffer)];
 
   source_kv.write(target_buffer, sizeof(target_buffer));
 
   auto target_kv =
-      nmq::key_value::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
+      nmq::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
 
   EXPECT_EQ(source_kv.has_key(), target_kv.has_key());
   EXPECT_EQ(source_kv.key_size(), target_kv.key_size());
@@ -144,17 +142,17 @@ TEST(KeyValueTest, HappyPathWriteEmptyKV) {
 }
 
 TEST(KeyValueTest, HappyPathWriteKNullVNull) {
-  nmq::key_value::key_value_t source_buffer[] = {-1, -1};
+  nmq::key_value_t source_buffer[] = {-1, -1};
 
   auto source_kv =
-      nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+      nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   char target_buffer[sizeof(source_buffer)];
 
   source_kv.write(target_buffer, sizeof(target_buffer));
 
   auto target_kv =
-      nmq::key_value::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
+      nmq::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
 
   EXPECT_EQ(source_kv.has_key(), target_kv.has_key());
   EXPECT_EQ(source_kv.key_size(), target_kv.key_size());
@@ -163,17 +161,17 @@ TEST(KeyValueTest, HappyPathWriteKNullVNull) {
 }
 
 TEST(KeyValueTest, HappyPathWriteKVNull) {
-  nmq::key_value::key_value_t source_buffer[] = {sizeof(nmq::key_value::key_value_t), 0, -1};
+  nmq::key_value_t source_buffer[] = {sizeof(nmq::key_value_t), 0, -1};
 
   auto source_kv =
-      nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+      nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   char target_buffer[sizeof(source_buffer)];
 
   source_kv.write(target_buffer, sizeof(target_buffer));
 
   auto target_kv =
-      nmq::key_value::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
+      nmq::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
 
   EXPECT_EQ(source_kv.has_key(), target_kv.has_key());
   EXPECT_EQ(source_kv.key_size(), target_kv.key_size());
@@ -182,17 +180,17 @@ TEST(KeyValueTest, HappyPathWriteKVNull) {
 }
 
 TEST(KeyValueTest, HappyPathWriteKNullV) {
-  nmq::key_value::key_value_t source_buffer[] = {-1, sizeof(nmq::key_value::key_value_t), 0};
+  nmq::key_value_t source_buffer[] = {-1, sizeof(nmq::key_value_t), 0};
 
   auto source_kv =
-      nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+      nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   char target_buffer[sizeof(source_buffer)];
 
   source_kv.write(target_buffer, sizeof(target_buffer));
 
   auto target_kv =
-      nmq::key_value::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
+      nmq::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
 
   EXPECT_EQ(source_kv.has_key(), target_kv.has_key());
   EXPECT_EQ(source_kv.key_size(), target_kv.key_size());
@@ -201,18 +199,18 @@ TEST(KeyValueTest, HappyPathWriteKNullV) {
 }
 
 TEST(KeyValueTest, HappyPathWriteKV) {
-  nmq::key_value::key_value_t source_buffer[] = {sizeof(nmq::key_value::key_value_t),
-                                         sizeof(nmq::key_value::key_value_t), 1, 1};
+  nmq::key_value_t source_buffer[] = {sizeof(nmq::key_value_t),
+                                      sizeof(nmq::key_value_t), 1, 1};
 
   auto source_kv =
-      nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+      nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   char target_buffer[sizeof(source_buffer)];
 
   source_kv.write(target_buffer, sizeof(target_buffer));
 
   auto target_kv =
-      nmq::key_value::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
+      nmq::KeyValue::read((char *)target_buffer, sizeof(target_buffer));
 
   EXPECT_EQ(source_kv.has_key(), target_kv.has_key());
   EXPECT_EQ(source_kv.key_size(), target_kv.key_size());
@@ -221,36 +219,36 @@ TEST(KeyValueTest, HappyPathWriteKV) {
 }
 
 TEST(KeyValueTest, SadPathWriteNullBuffer) {
-  nmq::key_value::key_value_t source_buffer[] = {sizeof(nmq::key_value::key_value_t),
-                                         sizeof(nmq::key_value::key_value_t), 1, 1};
+  nmq::key_value_t source_buffer[] = {sizeof(nmq::key_value_t),
+                                      sizeof(nmq::key_value_t), 1, 1};
 
   auto source_kv =
-      nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+      nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   EXPECT_THROW(source_kv.write(nullptr, sizeof(source_buffer)),
-               nmq::exception::NullptrArgumentException);
+               nmq::NullptrArgumentException);
 }
 
 TEST(KeyValueTest, SadPathWriteSmallerThanNecesseryBuffer) {
-  nmq::key_value::key_value_t source_buffer[] = {sizeof(nmq::key_value::key_value_t),
-                                         sizeof(nmq::key_value::key_value_t), 1, 1};
+  nmq::key_value_t source_buffer[] = {sizeof(nmq::key_value_t),
+                                      sizeof(nmq::key_value_t), 1, 1};
 
   auto source_kv =
-      nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+      nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   EXPECT_THROW(
       source_kv.write((char *)source_buffer, sizeof(source_buffer) - 1),
-      nmq::exception::ActualLessThanExpected);
+      nmq::ActualLessThanExpected);
 }
 
 TEST(KeyValueTest, SadPathWriteSmallerThanKVHeaderBuffer) {
-  nmq::key_value::key_value_t source_buffer[] = {sizeof(nmq::key_value::key_value_t),
-                                         sizeof(nmq::key_value::key_value_t), 1, 1};
+  nmq::key_value_t source_buffer[] = {sizeof(nmq::key_value_t),
+                                      sizeof(nmq::key_value_t), 1, 1};
 
   auto source_kv =
-      nmq::key_value::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
+      nmq::KeyValue::read((char *)source_buffer, sizeof(source_buffer));
 
   EXPECT_THROW(
       source_kv.write((char *)source_buffer, sizeof(source_buffer) - 1),
-      nmq::exception::ActualLessThanExpected);
+      nmq::ActualLessThanExpected);
 }

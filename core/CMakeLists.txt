@@ -14,13 +14,10 @@ add_library(core SHARED)
 target_sources(
     core
     PUBLIC
-    src/nmq/core/configuration.cpp
     src/nmq/core/index_chunk.cpp
+    src/nmq/core/index_log.cpp
     src/nmq/core/key_value.cpp
     src/nmq/core/message.cpp
-    src/nmq/core/partition.cpp 
-    src/nmq/core/partition_log.cpp
-    src/nmq/core/topic.cpp 
 )
 target_include_directories(
     core

@@ -4,38 +4,37 @@
 #include <array>
 #include <cstring>
 
-namespace nmq::index_chunk {
+namespace nmq {
 auto validate_buffer(char *source, std::size_t size) {
   if (source == nullptr) {
-    throw nmq::exception::NullptrArgumentException();
+    throw NullptrArgumentException();
   }
 
-  if (size < INDEX_CHUNK_SIZE) {
-    throw nmq::exception::ActualLessThanExpected(size, INDEX_CHUNK_SIZE);
+  if (size < IndexChunk::INDEX_CHUNK_RAW_SIZE) {
+    throw ActualLessThanExpected(size, IndexChunk::INDEX_CHUNK_RAW_SIZE);
   }
 }
 
-auto IndexChunk::read(char *source, std::size_t size) -> IndexChunk {
-  validate_buffer(source, size);
-  std::array<char, INDEX_CHUNK_SIZE> index_data = {};
-  offset_t offset = 0;
-  std::memcpy(index_data.data(), &offset, sizeof(offset));
+auto IndexChunk::read(
+    std::array<char, IndexChunk::INDEX_CHUNK_RAW_SIZE> &source) -> IndexChunk {
+  message_offset_t offset = 0;
+  std::memcpy(source.data(), &offset, sizeof(offset));
 
-  position_t position = 0;
-  std::memcpy(index_data.data() + sizeof(offset), &position, sizeof(position));
+  message_position_t position = 0;
+  std::memcpy(source.data() + sizeof(offset), &position, sizeof(position));
 
-  size_t message_size = 0;
-  std::memcpy(index_data.data() + sizeof(offset) + sizeof(position),
-              &message_size, sizeof(message_size));
+  message_size_t message_size = 0;
+  std::memcpy(source.data() + sizeof(offset) + sizeof(position), &message_size,
+              sizeof(message_size));
 
-  return {offset, position, message_size};
+  return IndexChunk(offset, position, message_size);
 }
 
-auto IndexChunk::write(char *target, std::size_t size) -> void {
-  validate_buffer(target, size);
-  std::memcpy(target, &_offset, sizeof(_offset));
-  std::memcpy(target + sizeof(_offset), &_position, sizeof(_position));
-  std::memcpy(target + sizeof(_offset) + sizeof(_position), &_size,
-              sizeof(_size));
+auto IndexChunk::write(
+    std::array<char, IndexChunk::INDEX_CHUNK_RAW_SIZE> &target) -> void {
+  std::memcpy(target.data(), &_offset, sizeof(_offset));
+  std::memcpy(target.data() + sizeof(_offset), &_position, sizeof(_position));
+  std::memcpy(target.data() + sizeof(_offset) + sizeof(_position),
+              &_message_size, sizeof(_message_size));
 }
 } // namespace nmq
