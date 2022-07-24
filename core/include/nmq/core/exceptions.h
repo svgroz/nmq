@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cerrno>
 #include <cstdint>
 #include <exception>
 #include <memory>
@@ -46,6 +47,16 @@ public:
   explicit CouldNotOpenFile(std::string &filename) : _filename(filename){};
   ~CouldNotOpenFile() override = default;
   auto filename() { return _filename; };
+};
+
+class SystemError final : std::exception {
+private:
+  int _error_number;
+
+public:
+  explicit SystemError(int error_number) : _error_number(error_number){};
+  ~SystemError() override = default;
+  auto error_number() { return _error_number; };
 };
 
 } // namespace nmq

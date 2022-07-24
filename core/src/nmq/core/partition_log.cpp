@@ -1,9 +1,11 @@
 #include <cstdlib>
 #include <fstream>
+#include <memory>
 #include <nmq/core/exceptions.h>
 #include <nmq/core/partition_log.h>
 
 #include <spdlog/spdlog.h>
+#include <vector>
 
 namespace nmq {
 PartitionLog::PartitionLog(const std::string &filename) : _filename(filename) {
@@ -28,7 +30,7 @@ PartitionLog::~PartitionLog() {
   }
 };
 
-auto PartitionLog::push_back(Message &message) -> position_t {
+auto PartitionLog::push_back(Message &message) -> message_position_t {
   std::int64_t message_size = message.size();
   auto buffer = std::make_unique<std::vector<char>>(message_size);
   message.write(buffer->data(), message_size);
@@ -38,8 +40,8 @@ auto PartitionLog::push_back(Message &message) -> position_t {
   return current_position + message_size;
 }
 
-auto PartitionLog::read(position_t position, size_t size) -> Message {
-  auto buffer = std::make_unique<std::vector<char>>(size);
+auto PartitionLog::read(message_position_t position, size_t size) -> Message {
+  std::unique_ptr<std::vector<char>> buffer = std::make_unique<std::vector<char>>(size);
   _file.seekg(position);
   _file.read(buffer->data(), size);
   return read(buffer->data(), size);

@@ -2,35 +2,42 @@
     "version": 2,
     "configurePresets": [
         {
-            "name": "clang",
+            "name": "__basis",
             "displayName": "",
             "description": "",
             "generator": "Unix Makefiles",
             "binaryDir": "${workspaceFolder}/build/",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_BUILD_TYPE": "Debug",
-                "BUILD_TESTING": false
+                "BUILD_TESTING": false,
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "1"
             },
             "debug": {
                 "output": false
             }
         },
         {
+            "name": "clang",
+            "displayName": "",
+            "description": "",
+            "inherits": [
+                "__basis"
+            ],
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
+            }
+        },
+        {
             "name": "gcc",
             "displayName": "",
             "description": "",
-            "generator": "Unix Makefiles",
-            "binaryDir": "${workspaceFolder}/build/",
+            "inherits": [
+                "__basis"
+            ],
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
-                "CMAKE_BUILD_TYPE": "Debug",
-                "BUILD_TESTING": false
-            },
-            "debug": {
-                "output": false
+                "CMAKE_CXX_COMPILER": "g++"
             }
         },
         {
