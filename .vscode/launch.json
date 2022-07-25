@@ -5,6 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "gdb",
+            "request": "launch",
+            "name": "GDB",
+            "program": "${workspaceFolder}/build/test_core/test_core",
+            "stopOnEntry": false
+        },
+        
+        {
             "type": "lldb",
             "request": "launch",
             "name": "Launch ctests",

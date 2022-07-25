@@ -18,7 +18,7 @@ public:
   explicit IndexLog(std::string &filename);
   IndexLog(IndexLog &&) = delete;
   virtual ~IndexLog() = default;
-  auto push_back(IndexChunk &index_chunk) -> void;
+  auto push_back(IndexChunk index_chunk) -> void;
   auto load(message_offset_t offset, std::size_t count)
       -> std::unique_ptr<std::vector<IndexChunk>>;
 };
