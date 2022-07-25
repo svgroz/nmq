@@ -48,7 +48,7 @@
                 "clang"
             ],
             "cacheVariables": {
-                "BUILD_TESTING": true
+                "BUILD_TESTING": "1"
             }
         },
         {
@@ -59,7 +59,7 @@
                 "gcc"
             ],
             "cacheVariables": {
-                "BUILD_TESTING": true
+                "BUILD_TESTING": "1"
             }
         }
     ]

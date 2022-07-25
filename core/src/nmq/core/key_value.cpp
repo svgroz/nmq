@@ -1,4 +1,5 @@
 #include <cstring>
+#include <array>
 
 #include <nmq/core/exceptions.h>
 #include <nmq/core/key_value.h>
@@ -48,7 +49,7 @@ auto KeyValue::read(char *source, const std::size_t size) -> KeyValue {
   }
   check_min_size(size);
 
-  std::array<key_value_t, 2> key_value_header;
+  auto key_value_header = std::array<key_value_t, 2>();
   std::memcpy(key_value_header.data(), source, KEY_VALUE_HEADER_SIZE);
 
   key_value_t key_size = key_value_header[0];
