@@ -5,21 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "gdb",
+            "type": "by-gdb",
             "request": "launch",
-            "name": "GDB",
-            "program": "${workspaceFolder}/build/test_core/test_core",
-            "stopOnEntry": false
+            "name": "gdb test_core",
+            "program": "${workspaceRoot}/build/test_core/test_core",
+            "cwd": "${workspaceFolder}"
         },
-        
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Launch ctests",
-            "program": "${workspaceFolder}/build/test_core/test_core",
+            "name": "lldb test_core",
+            "program": "${workspaceRoot}/build/test_core/test_core",
             "args": [],
             "cwd": "${workspaceFolder}"
         }
-        
     ]
 }
