@@ -15,5 +15,5 @@ TEST(IndexLogTest, BasicHappyPath) {
     log.push_back(c);
   }
 
-  log.load(10, 30);
+  log.load(50, 10);
 }

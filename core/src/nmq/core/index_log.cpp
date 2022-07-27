@@ -11,6 +11,7 @@
 #include <nmq/core/exceptions.h>
 #include <nmq/core/index_log.h>
 #include <spdlog/spdlog.h>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -24,7 +25,9 @@ constexpr std::int_fast64_t PAGE_SIZE =
 constexpr std::int_fast64_t CHUNKS_ON_PAGE = PAGE_SIZE / sizeof(IndexChunk);
 constexpr std::int_fast64_t CHUNKS_ON_PAGE_RAW_SIZE =
     CHUNKS_ON_PAGE * sizeof(IndexChunk);
-constexpr std::int_fast64_t NOT_FOUND_ON_PAGE = CHUNKS_ON_PAGE + 1;
+constexpr std::int_fast64_t PAGE_TILE_SIZE =
+    PAGE_SIZE - CHUNKS_ON_PAGE_RAW_SIZE;
+constexpr std::int_fast64_t NOT_FOUND = -1;
 
 IndexLog::IndexLog(std::string &filename)
     : _filename(filename),
@@ -50,21 +53,24 @@ auto IndexLog::push_back(IndexChunk index_chunk) -> void {
 
   auto current_position_on_page = end % PAGE_SIZE;
   if (current_position_on_page >= CHUNKS_ON_PAGE_RAW_SIZE) {
-    auto tail_buffer = std::vector<char>(PAGE_SIZE - current_position_on_page);
-    _file.write(tail_buffer.data(), tail_buffer.capacity());
+    auto tail_buffer = std::array<char, PAGE_TILE_SIZE + sizeof(IndexChunk)>();
+    std::memcpy(tail_buffer.data() + PAGE_TILE_SIZE, &index_chunk,
+                sizeof(IndexChunk));
+    _file.write(tail_buffer.data(), tail_buffer.size());
+  } else {
+    _file.write(raw_chunk_ptr, sizeof(IndexChunk));
   }
-  _file.write(raw_chunk_ptr, sizeof(IndexChunk));
 };
 
 auto search_on_page(const IndexChunk *page, const std::size_t page_size,
                     const message_offset_t offset)
     -> std::pair<int, std::int_fast64_t> {
   if (offset < page[0]._offset) {
-    return std::make_pair(-1, NOT_FOUND_ON_PAGE);
+    return std::make_pair(-1, NOT_FOUND);
   }
 
   if (offset > page[page_size - 1]._offset) {
-    return std::make_pair(1, NOT_FOUND_ON_PAGE);
+    return std::make_pair(1, NOT_FOUND);
   }
 
   std::size_t L = 0;
@@ -85,42 +91,83 @@ auto search_on_page(const IndexChunk *page, const std::size_t page_size,
   return std::make_pair(0, m);
 };
 
+auto load_page(std::int_fast64_t page_index, char *buffer, std::fstream &file,
+               std::int_fast64_t file_size) -> std::int_fast64_t {
+  std::int_fast64_t current_page_start = page_index * PAGE_SIZE;
+  std::int_fast64_t to_read = file_size - current_page_start > 0
+                                  ? PAGE_SIZE
+                                  : file_size - current_page_start;
+  file.seekg(current_page_start);
+  file.read(buffer, to_read);
+  return to_read / static_cast<std::int_fast64_t>(sizeof(IndexChunk));
+}
+
+auto find_page_with_offset(message_offset_t offset, std::fstream &file,
+                           const std::int_fast64_t file_size, char *buffer,
+                           IndexChunk *index_chunk_ptr)
+    -> std::tuple<std::int_fast64_t, std::int_fast64_t, std::int_fast64_t> {
+
+  std::int_fast64_t left_index = 0;
+  std::int_fast64_t right_index = file_size / PAGE_SIZE;
+
+  do {
+    std::int_fast64_t current_page_index = (left_index + right_index) / 2;
+    std::int_fast64_t chunks_in_ptr =
+        load_page(current_page_index, buffer, file, file_size);
+    auto search_result = search_on_page(index_chunk_ptr, chunks_in_ptr, offset);
+    if (search_result.first > 0) {
+      left_index = current_page_index + 1;
+    } else if (search_result.first < 0) {
+      right_index = current_page_index - 1;
+    } else {
+      return std::make_tuple(current_page_index, search_result.second,
+                             chunks_in_ptr);
+    }
+  } while (left_index <= right_index);
+  return std::make_tuple(NOT_FOUND, NOT_FOUND, NOT_FOUND);
+};
+
 auto IndexLog::load(message_offset_t offset, std::size_t count)
     -> std::unique_ptr<std::vector<IndexChunk>> {
 
-  std::int_fast64_t start = 0;
   _file.seekg(0, std::fstream::end);
-  std::int_fast64_t end = _file.tellg();
-  std::size_t pages_available = end / PAGE_SIZE;
+  const std::int_fast64_t end = _file.tellg();
+
+  const std::int_fast64_t pages_available = (end / PAGE_SIZE) + 1;
 
   std::unique_ptr<std::array<char, PAGE_SIZE>> page_buffer =
       std::make_unique<std::array<char, PAGE_SIZE>>();
   auto *index_chunk_ptr = reinterpret_cast<IndexChunk *>(page_buffer->data());
-  
-  std::size_t L = 0;
-  std::size_t R = pages_available;
-  std::size_t m = 0;
+
+  auto [page_numer, chunk_index, chunks_on_page] = find_page_with_offset(
+      offset, _file, end, page_buffer->data(), index_chunk_ptr);
+
+  if (page_numer <= NOT_FOUND) {
+    return std::make_unique<std::vector<IndexChunk>>();
+  }
+
+  auto result = std::make_unique<std::vector<IndexChunk>>();
+
+  auto reserve_size =
+      page_numer == pages_available - 1 ? chunks_on_page - chunk_index : count;
+
+  result->reserve(reserve_size);
 
   do {
-    m = (L + R) / 2;
-    std::int_fast64_t i = m * PAGE_SIZE;
-    std::int_fast64_t to_read = end - i > 0 ? PAGE_SIZE : end - i;
-    std::int_fast64_t chunk_in_ptr = to_read / sizeof(IndexChunk);
-
-    _file.seekg(i);
-    _file.read(page_buffer->data(), to_read);
-
-    auto search_result = search_on_page(index_chunk_ptr, chunk_in_ptr, offset);
-    if (search_result.first > 0) {
-      L = m + 1;
-    } else if (search_result.first < 0) {
-      R = m - 1;
-    } else {
-      break;
+    for (auto i = chunk_index; i < chunks_on_page; i++) {
+      result->push_back(index_chunk_ptr[i]);
     }
-  } while (L <= R);
 
-  return std::make_unique<std::vector<IndexChunk>>();
+    if (page_numer == pages_available - 1 || result->size() == count) {
+      return result;
+    }
+
+    page_numer = page_numer + 1;
+    chunk_index = 0;
+    chunks_on_page = load_page(page_numer, page_buffer->data(), _file, end);
+  } while (page_numer < pages_available);
+
+  return result;
 };
 
 } // namespace nmq
