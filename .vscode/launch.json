@@ -17,6 +17,9 @@
             "name": "lldb test_core",
             "program": "${workspaceRoot}/build/test_core/test_core",
             "args": [],
+            "env": {
+                "LSAN_OPTIONS": "verbosity=1:log_threads=1"
+            },
             "cwd": "${workspaceFolder}"
         }
     ]

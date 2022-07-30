@@ -52,6 +52,18 @@
             }
         },
         {
+            "name": "clang with test + sanitize",
+            "description": "",
+            "displayName": "",
+            "inherits": [
+                "clang"
+            ],
+            "cacheVariables": {
+                "BUILD_TESTING": "1",
+                "CMAKE_CXX_FLAGS_DEBUG": "-fsanitize=address,undefined -fno-omit-frame-pointer"
+            }
+        },
+        {
             "name": "gcc with test",
             "description": "",
             "displayName": "",
