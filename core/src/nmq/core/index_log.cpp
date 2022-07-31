@@ -84,6 +84,19 @@ auto load_page(std::int_fast64_t page_index, std::int_fast64_t page_size,
   return to_read / CHUNK_SIZE;
 }
 
+auto refresh_buffer_if_necessery(Buffer<BufferContext> &page_buffer,
+                                 std::int_fast64_t page_index,
+                                 std::int_fast64_t page_size,
+                                 std::fstream &file,
+                                 std::int_fast64_t file_size) {
+  if (page_buffer.context()._page != page_index) {
+    auto chunks_on_page =
+        load_page(page_index, page_size, page_buffer, file, file_size);
+    page_buffer.set_context(
+        {._page = page_index, ._chunks_on_page = chunks_on_page});
+  }
+}
+
 auto IndexLog::load(message_offset_t offset, std::size_t count)
     -> std::unique_ptr<std::vector<IndexChunk>> {
   if (offset < 0) {
@@ -105,19 +118,15 @@ auto IndexLog::load(message_offset_t offset, std::size_t count)
 
   std::int_fast64_t L = 0;
   std::int_fast64_t R = chunks_available - 1;
-  std::int_fast64_t m = (L + R) / 2;
+  std::int_fast64_t m = 0;
   while (L <= R) {
     m = (L + R) / 2;
     const std::int_fast64_t page_index = m / _chunks_on_page;
     const std::int_fast64_t chunk_index_on_the_page =
         m - (page_index * _chunks_on_page);
 
-    if (page_buffer.context()._page != page_index) {
-      auto chunks_on_page =
-          load_page(page_index, _page_size, page_buffer, _file, file_size);
-      page_buffer.set_context(
-          {._page = page_index, ._chunks_on_page = chunks_on_page});
-    }
+    refresh_buffer_if_necessery(page_buffer, page_index, _page_size, _file,
+                                file_size);
 
     auto chunk = index_chunk_ptr[chunk_index_on_the_page];
 
@@ -137,12 +146,8 @@ auto IndexLog::load(message_offset_t offset, std::size_t count)
     const std::int_fast64_t chunk_index_on_the_page =
         m - (page_index * _chunks_on_page);
 
-    if (page_buffer.context()._page != page_index) {
-      auto chunks_on_page =
-          load_page(page_index, _page_size, page_buffer, _file, file_size);
-      page_buffer.set_context(
-          {._page = page_index, ._chunks_on_page = chunks_on_page});
-    }
+    refresh_buffer_if_necessery(page_buffer, page_index, _page_size, _file,
+                                file_size);
 
     result->push_back(index_chunk_ptr[chunk_index_on_the_page]);
     result_size++;
