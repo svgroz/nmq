@@ -4,6 +4,14 @@
 #include <nmq/core/index_log.h>
 #include <spdlog/spdlog.h>
 
+auto t(nmq::IndexLog &log, int offset, int count) {
+  auto r = log.load(offset, count);
+  spdlog::info("r->size() == {}", r->size());
+  for (auto i = 0; i < r->size(); i++) {
+    spdlog::info("offset {}", r->at(i)._offset);
+  }
+}
+
 TEST(IndexLogTest, BasicHappyPath) {
 
   std::string tmp_directory =
@@ -17,10 +25,7 @@ TEST(IndexLogTest, BasicHappyPath) {
     log.push_back(c);
   }
 
-  auto r1 = log.load(0, 10);
-  spdlog::info("r1->size() == {}", r1->size());
-  auto r2 = log.load(20, 10);
-  spdlog::info("r2->size() == {}", r2->size());
-  auto r3 = log.load(90, 10);
-  spdlog::info("r3->size() == {}", r3->size());
+ // t(log, 0, 10);
+  t(log, 20, 10);
+//  t(log, 90, 10);
 }
