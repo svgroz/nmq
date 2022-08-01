@@ -1,41 +1,46 @@
-#include <cstring>
+#include <algorithm>
 #include <array>
+#include <cstdint>
+#include <cstring>
+
+#include <boost/numeric/conversion/cast.hpp>
 
 #include <nmq/core/exceptions.h>
 #include <nmq/core/key_value.h>
 
 namespace nmq {
 
-static constexpr std::size_t KEY_VALUE_HEADER_CHUNK_MAX_SIZE =
+inline constexpr std::int_fast32_t KEY_VALUE_HEADER_CHUNK_MAX_SIZE =
     std::numeric_limits<key_value_t>().max();
 
-static constexpr std::size_t KEY_VALUE_HEADER_SIZE = sizeof(key_value_t) * 2;
+inline constexpr std::int_fast32_t KEY_VALUE_HEADER_SIZE =
+    static_cast<std::int_fast32_t>(sizeof(key_value_t) * 2);
 
-void check_expected_size(std::size_t expected, std::size_t actual) {
+auto check_expected_size(std::int_fast64_t expected, std::int_fast64_t actual) {
   if (actual < expected) {
     throw ActualLessThanExpected(actual, expected);
   }
 }
 
-void check_min_size(std::size_t actual) {
+auto check_min_size(std::int_fast64_t actual) {
   if (actual < KEY_VALUE_HEADER_SIZE) {
     throw ActualLessThanExpected(actual, KEY_VALUE_HEADER_SIZE);
   }
 }
 
-void check_max_size(std::size_t actual) {
+auto check_max_size(std::int_fast64_t actual) {
   if (actual > KEY_VALUE_HEADER_CHUNK_MAX_SIZE) {
     throw ActualHigherThanExpected(actual, KEY_VALUE_HEADER_CHUNK_MAX_SIZE);
   }
 }
 
-inline auto init_vector(char *source, std::size_t size) -> std::vector<char> {
+auto init_vector(char *source, std::int_fast64_t size) -> std::vector<char> {
   std::vector<char> result(size);
-  std::copy(source, source + size, result.data());
+  std::memcpy(result.data(), source, size);
   return result;
 }
 
-auto size_of_inner_vector(std::size_t source_size) {
+auto size_of_inner_vector(key_value_t source_size) {
   if (source_size > KEY_VALUE_HEADER_CHUNK_MAX_SIZE) {
     throw ActualHigherThanExpected(source_size,
                                    KEY_VALUE_HEADER_CHUNK_MAX_SIZE);
@@ -43,7 +48,7 @@ auto size_of_inner_vector(std::size_t source_size) {
   return static_cast<key_value_t>(source_size);
 }
 
-auto KeyValue::read(char *source, const std::size_t size) -> KeyValue {
+auto KeyValue::read(char *source, const std::int_fast64_t size) -> KeyValue {
   if (source == nullptr) {
     throw NullptrArgumentException();
   }
@@ -55,7 +60,7 @@ auto KeyValue::read(char *source, const std::size_t size) -> KeyValue {
   key_value_t key_size = key_value_header[0];
   key_value_t value_size = key_value_header[1];
 
-  std::size_t expected_size =
+  std::int_fast64_t expected_size =
       KEY_VALUE_HEADER_SIZE + std::max(key_size, 0) + std::max(value_size, 0);
 
   check_expected_size(expected_size, size);
@@ -74,18 +79,27 @@ auto KeyValue::read(char *source, const std::size_t size) -> KeyValue {
   return {key, has_key, value, has_value};
 }
 
-auto KeyValue::write(char *target, std::size_t size) -> std::size_t {
+auto KeyValue::write(char *target, std::int_fast64_t size)
+    -> std::int_fast64_t {
   if (target == nullptr) {
     throw NullptrArgumentException();
   }
+  
   check_min_size(size);
 
-  key_value_t key_size = _has_key ? size_of_inner_vector(_key.size()) : -1;
+  key_value_t key_size =
+      _has_key
+          ? size_of_inner_vector(boost::numeric_cast<key_value_t>(_key.size()))
+          : -1;
+
   key_value_t value_size =
-      _has_value ? size_of_inner_vector(_value.size()) : -1;
-  std::size_t expected_size = KEY_VALUE_HEADER_SIZE +
-                              (_has_key ? key_size : 0) +
-                              (_has_value ? value_size : 0);
+      _has_value ? size_of_inner_vector(
+                       boost::numeric_cast<key_value_t>(_value.size()))
+                 : -1;
+
+  std::int_fast64_t expected_size = KEY_VALUE_HEADER_SIZE +
+                                    (_has_key ? key_size : 0) +
+                                    (_has_value ? value_size : 0);
 
   check_expected_size(expected_size, size);
 
@@ -105,7 +119,8 @@ auto KeyValue::write(char *target, std::size_t size) -> std::size_t {
 
   return KEY_VALUE_HEADER_SIZE + key_size + value_size;
 }
-auto KeyValue::size() noexcept -> std::size_t {
+
+auto KeyValue::size() noexcept -> std::int_fast64_t {
   return KEY_VALUE_HEADER_SIZE + (_has_key ? _key.size() : 0) +
          (_has_value ? _value.size() : 0);
 };

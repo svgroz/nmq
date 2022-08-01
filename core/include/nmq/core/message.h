@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <vector>
 
 #include <memory>
@@ -19,8 +20,8 @@ public:
   Message(Message &&message) = default;
   virtual ~Message() = default;
   auto add_header(KeyValue &header) -> void;
-  auto size() -> message_size_t;
-  static auto read(char *source, std::size_t source_size) -> Message;
-  auto write(char *target, std::size_t target_size) -> void;
+  auto size() noexcept -> message_size_t;
+  static auto read(char *source, std::int_fast64_t source_size) -> Message;
+  auto write(char *target, std::int_fast64_t target_size) -> void;
 };
 } // namespace nmq

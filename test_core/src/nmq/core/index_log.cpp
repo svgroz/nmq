@@ -7,8 +7,8 @@
 auto t(nmq::IndexLog &log, int offset, int count) {
   auto r = log.load(offset, count);
   spdlog::info("r->size() == {}", r->size());
-  for (auto i = 0; i < r->size(); i++) {
-    spdlog::info("offset {}", r->at(i)._offset);
+  for (auto &i : *r) {
+    spdlog::info("offset {}", i._offset);
   }
 }
 

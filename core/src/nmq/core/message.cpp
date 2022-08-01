@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <nmq/core/message.h>
 
 #include <limits>
@@ -9,7 +10,7 @@ auto Message::add_header(KeyValue &header) -> void {
   _headers.emplace_back(std::move(header));
 }
 
-auto Message::size() -> message_size_t {
+auto Message::size() noexcept -> message_size_t {
   message_size_t result = 0;
   for (auto &header : _headers) {
     result = result + header.size();
@@ -18,8 +19,8 @@ auto Message::size() -> message_size_t {
   return result;
 };
 
-auto Message::read(char *source, std::size_t source_size) -> Message {
-  std::size_t size = 0;
+auto Message::read(char *source, std::int_fast64_t source_size) -> Message {
+  std::int_fast64_t size = 0;
   std::vector<KeyValue> headers = std::vector<KeyValue>();
   while (size < source_size) {
     auto key_value = KeyValue::read(source + size, source_size - size);
@@ -30,8 +31,8 @@ auto Message::read(char *source, std::size_t source_size) -> Message {
   return Message(headers);
 }
 
-auto Message::write(char *target, std::size_t target_size) -> void {
-  std::size_t offset = 0;
+auto Message::write(char *target, std::int_fast64_t target_size) -> void {
+  std::int_fast64_t offset = 0;
   for (auto &header : _headers) {
     offset = offset + header.write(target + offset, target_size - offset);
   }
