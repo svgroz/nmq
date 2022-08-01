@@ -19,13 +19,19 @@ TEST(IndexLogTest, BasicHappyPath) {
       ("testPushBackHappyPath" + std::to_string(std::time(nullptr)));
 
   nmq::IndexLog log =
-      nmq::IndexLog(tmp_directory, (sizeof(nmq::IndexChunk) * 7) + 1);
-  for (auto i = 0; i < 90; i = i + 1) {
+      nmq::IndexLog(tmp_directory, (sizeof(nmq::IndexChunk) * 3) + 1);
+  for (auto i = 0; i < 120; i = i + 3) {
     nmq::IndexChunk c = {._offset = i, ._position = i, ._size = 9};
     log.push_back(c);
   }
 
- // t(log, 0, 10);
+  t(log, 4, 10);
   t(log, 20, 10);
-//  t(log, 90, 10);
+
+  for (auto i = 150; i < 200; i = i + 2) {
+    nmq::IndexChunk c = {._offset = i, ._position = i, ._size = 9};
+    log.push_back(c);
+  }
+
+  t(log, 100, 10);
 }

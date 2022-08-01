@@ -13,9 +13,16 @@ private:
 public:
   explicit Buffer(std::size_t size, T context)
       : _size(size), _data(new char[size]), _context(context){};
+  Buffer(const Buffer &) = delete;
+  Buffer(Buffer &&source) noexcept {
+    _data = source._data;
+    source._data = nullptr;
+    _context = source._context;
+  };
   virtual ~Buffer() {
     if (_data) {
       delete[] _data;
+      _data = nullptr;
     }
   }
 
