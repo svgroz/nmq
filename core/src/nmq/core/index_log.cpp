@@ -18,10 +18,8 @@ IndexLog::IndexLog(std::string &filename, std::int_fast64_t page_size)
     : _filename(filename),
       _file(_filename, std::fstream::in | std::fstream::out |
                            std::fstream::binary | std::fstream::app),
-      _page_size(page_size), _chunks_on_page(static_cast<std::int_fast64_t>(
-                                 _page_size / sizeof(IndexChunk))),
-      _chunks_on_page_raw_size(
-          static_cast<std::int_fast64_t>(_chunks_on_page * sizeof(IndexChunk))),
+      _page_size(page_size), _chunks_on_page(_page_size / CHUNK_SIZE),
+      _chunks_on_page_raw_size(_chunks_on_page * CHUNK_SIZE),
       _page_tile_size(_page_size - _chunks_on_page_raw_size), _page_cache(20) {
 
   if (_file.good()) {
@@ -42,19 +40,18 @@ auto IndexLog::push_back(IndexChunk index_chunk) -> void {
 
   auto current_position_on_page = end % _page_size;
   if (current_position_on_page >= _chunks_on_page_raw_size) {
-    auto buffer_size = _page_tile_size + sizeof(IndexChunk);
+    auto buffer_size = _page_tile_size + CHUNK_SIZE;
     auto tail_buffer = Buffer<int>(buffer_size, 0);
 
-    std::memcpy(tail_buffer.data() + _page_tile_size, &index_chunk,
-                sizeof(IndexChunk));
+    std::memcpy(tail_buffer.data() + _page_tile_size, &index_chunk, CHUNK_SIZE);
     _file.write(tail_buffer.data(), tail_buffer.size());
   } else {
-    _file.write(raw_chunk_ptr, sizeof(IndexChunk));
+    _file.write(raw_chunk_ptr, CHUNK_SIZE);
   }
 };
 
 auto IndexLog::load_page_buffer(std::int_fast64_t page_index,
-                         std::int_fast64_t file_size) -> PageBuffer {
+                                std::int_fast64_t file_size) -> PageBuffer {
 
   const std::int_fast64_t current_page_start = page_index * _page_size;
   const std::int_fast64_t to_read = file_size - current_page_start >= _page_size
