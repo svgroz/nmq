@@ -25,13 +25,7 @@ TEST(IndexLogTest, BasicHappyPath) {
     log.push_back(c);
   }
 
-  t(log, 4, 10);
-  t(log, 20, 10);
-
-  for (auto i = 150; i < 200; i = i + 2) {
-    nmq::IndexChunk c = {._offset = i, ._position = i, ._size = 9};
-    log.push_back(c);
-  }
-
-  t(log, 100, 10);
+  t(log, 0, 10);
+  t(log, 61, 10);
+  t(log, 119, 10);
 }

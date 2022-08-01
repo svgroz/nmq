@@ -30,8 +30,12 @@ private:
   const std::int_fast64_t _page_tile_size;
   boost::compute::detail::lru_cache<std::int_fast64_t, PageBuffer> _page_cache;
 
+  auto chunks_available(std::int_fast64_t file_size) noexcept
+      -> std::int_fast64_t;
   auto load_page_buffer(std::int_fast64_t page_index,
                         std::int_fast64_t file_size) -> PageBuffer;
+  auto upper_bound(message_offset_t offset, std::int_fast64_t file_size)
+      -> std::int_fast64_t;
 
 public:
   explicit IndexLog(std::string &filename, std::int_fast64_t page_size);

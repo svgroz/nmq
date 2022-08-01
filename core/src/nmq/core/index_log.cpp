@@ -50,6 +50,15 @@ auto IndexLog::push_back(IndexChunk index_chunk) -> void {
   }
 };
 
+auto IndexLog::chunks_available(std::int_fast64_t file_size) noexcept
+    -> std::int_fast64_t {
+  const std::int_fast64_t pages_available = (file_size / _page_size) + 1;
+  const std::int_fast64_t last_page_size =
+      file_size - ((pages_available - 1) * _page_size);
+  return ((pages_available - 1) * _chunks_on_page) +
+         (last_page_size / CHUNK_SIZE);
+};
+
 auto IndexLog::load_page_buffer(std::int_fast64_t page_index,
                                 std::int_fast64_t file_size) -> PageBuffer {
 
@@ -84,6 +93,51 @@ auto IndexLog::load_page_buffer(std::int_fast64_t page_index,
   return buffer;
 }
 
+auto IndexLog::upper_bound(message_offset_t offset, std::int_fast64_t file_size)
+    -> std::int_fast64_t {
+  const std::int_fast64_t pages_available = (file_size / _page_size) + 1;
+  const std::int_fast64_t chunks_available = this->chunks_available(file_size);
+
+  std::int_fast64_t L = 0;
+  std::int_fast64_t R = chunks_available - 1;
+
+  while (L < R) {
+    const std::int_fast64_t m = (L + R) / 2;
+    const std::int_fast64_t page_index = m / _chunks_on_page;
+    const std::int_fast64_t chunk_index_on_the_page =
+        m - (page_index * _chunks_on_page);
+
+    auto page_buffer = load_page_buffer(page_index, file_size);
+    auto *index_chunk_ptr = reinterpret_cast<IndexChunk *>(page_buffer->data());
+
+    auto chunk = index_chunk_ptr[chunk_index_on_the_page];
+
+    if (offset >= chunk._offset) {
+      L = m + 1;
+    } else {
+      R = m;
+    }
+  }
+
+  std::int_fast64_t page_index = L / _chunks_on_page;
+  std::int_fast64_t chunk_index_on_the_page =
+      L - ((page_index)*_chunks_on_page);
+
+  auto page_buffer = load_page_buffer(page_index, file_size);
+  auto *index_chunk_ptr = reinterpret_cast<IndexChunk *>(page_buffer->data());
+
+  if (L >= chunks_available) {
+    return -1;
+  }
+
+  auto chunk_by_L = index_chunk_ptr[chunk_index_on_the_page];
+  if (chunk_by_L._offset < offset) {
+    return L + 1;
+  }
+
+  return L;
+};
+
 auto IndexLog::load(message_offset_t offset, std::size_t count)
     -> std::unique_ptr<std::vector<IndexChunk>> {
   if (offset < 0) {
@@ -94,47 +148,36 @@ auto IndexLog::load(message_offset_t offset, std::size_t count)
   const std::int_fast64_t file_size = _file.tellg();
 
   const std::int_fast64_t pages_available = (file_size / _page_size) + 1;
-  const std::int_fast64_t last_page_size =
-      file_size - ((pages_available - 1) * _page_size);
-  const std::int_fast64_t chunks_available =
-      ((pages_available - 1) * _chunks_on_page) + (last_page_size / CHUNK_SIZE);
+  const std::int_fast64_t chunks_available = this->chunks_available(file_size);
 
-  std::int_fast64_t L = 0;
-  std::int_fast64_t R = chunks_available - 1;
-  std::int_fast64_t m = 0;
-  while (L <= R) {
-    m = (L + R) / 2;
-    const std::int_fast64_t page_index = m / _chunks_on_page;
-    const std::int_fast64_t chunk_index_on_the_page =
-        m - (page_index * _chunks_on_page);
+  std::int_fast64_t chunk_index = upper_bound(offset, file_size);
 
-    auto page_buffer = load_page_buffer(page_index, file_size);
-    auto *index_chunk_ptr = reinterpret_cast<IndexChunk *>(page_buffer->data());
-
-    auto chunk = index_chunk_ptr[chunk_index_on_the_page];
-
-    if (chunk._offset < offset) {
-      L = m + 1;
-    } else if (chunk._offset > offset) {
-      R = m - 1;
-    } else {
-      break;
-    }
+  if (chunk_index < 0) {
+    return std::make_unique<std::vector<IndexChunk>>();
   }
 
   auto result = std::make_unique<std::vector<IndexChunk>>();
   std::int_fast64_t result_size = 0;
-  for (; result_size < count && m < chunks_available; m++) {
-    const std::int_fast64_t page_index = m / _chunks_on_page;
+
+  do {
+    const std::int_fast64_t page_index = chunk_index / _chunks_on_page;
+    const auto page_buffer = load_page_buffer(page_index, file_size);
+    const auto page_buffer_context = page_buffer->context();
     const std::int_fast64_t chunk_index_on_the_page =
-        m - (page_index * _chunks_on_page);
+        chunk_index - (page_index * _chunks_on_page);
+    const IndexChunk *chunks_ptr =
+        reinterpret_cast<IndexChunk *>(page_buffer->data());
 
-    auto page_buffer = load_page_buffer(page_index, file_size);
-    auto *index_chunk_ptr = reinterpret_cast<IndexChunk *>(page_buffer->data());
+    for (std::int_fast64_t i = chunk_index_on_the_page;
+         i < page_buffer_context._chunks_on_page && result_size < count; i++) {
+      auto chunk = chunks_ptr[i];
+      result->push_back(chunk);
+      result_size++;
+    }
 
-    result->push_back(index_chunk_ptr[chunk_index_on_the_page]);
-    result_size++;
-  }
+    chunk_index = chunk_index + result_size;
+
+  } while (result_size < count && chunk_index < chunks_available);
 
   return result;
 };
