@@ -17,7 +17,7 @@ public:
   explicit Message(std::vector<KeyValue> &headers)
       : _headers(std::move(headers)){};
   Message(const Message &) = delete;
-  Message(Message &&message) = default;
+  Message(Message &&) = default;
   virtual ~Message() = default;
   auto add_header(KeyValue &header) -> void;
   auto size() noexcept -> message_size_t;

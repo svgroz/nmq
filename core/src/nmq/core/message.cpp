@@ -1,8 +1,8 @@
 #include <cstdint>
-#include <nmq/core/message.h>
-
 #include <limits>
+
 #include <nmq/core/exceptions.h>
+#include <nmq/core/message.h>
 
 namespace nmq {
 

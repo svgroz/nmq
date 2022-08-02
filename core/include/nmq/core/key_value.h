@@ -26,14 +26,13 @@ public:
   KeyValue(KeyValue &&) = default;
   virtual ~KeyValue() = default;
 
+  static auto read(char *source, std::int_fast64_t size) -> KeyValue;
+  auto write(char *target, std::int_fast64_t size) -> std::int_fast64_t;
+
   auto key_size() noexcept { return _key.size(); };
   auto has_key() noexcept { return _has_key; };
   auto value_size() noexcept { return _value.size(); };
   auto has_value() noexcept { return _has_value; };
-
-  static auto read(char *source, std::int_fast64_t size) -> KeyValue;
-  auto write(char *target, std::int_fast64_t size) -> std::int_fast64_t;
-
   auto size() noexcept -> std::int_fast64_t;
 };
 
