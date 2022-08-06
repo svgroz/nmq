@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstddef>
+#include <memory>
 
 namespace nmq {
 
@@ -26,9 +26,9 @@ public:
     }
   }
 
-  auto data() noexcept { return _data; };
-  auto size() noexcept { return _size; };
-  auto context() noexcept { return _context; }
-  auto set_context(T context) noexcept { this->_context = context; };
+  auto data() { return _data; };
+  auto size() { return _size; };
+  auto context() { return _context; }
+  auto set_context(T context) { this->_context = context; };
 };
 } // namespace nmq

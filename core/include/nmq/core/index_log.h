@@ -1,7 +1,11 @@
 #pragma once
 
+#include "limits.h"
+#include <climits>
+#include <cmath>
 #include <cstdint>
 #include <fstream>
+#include <limits>
 #include <memory>
 #include <vector>
 
@@ -9,13 +13,14 @@
 
 #include <nmq/core/buffer.h>
 #include <nmq/core/index_chunk.h>
+#include <nmq/core/lru.h>
 #include <nmq/core/types.h>
 
 namespace nmq {
 
 class IndexLog final {
 private:
-  using BufferContext = struct {
+  using BufferContext = struct BufferContext {
     std::int_fast64_t _page;
     std::int_fast64_t _chunks_on_page;
   };
@@ -28,7 +33,7 @@ private:
   const std::int_fast64_t _chunks_on_page;
   const std::int_fast64_t _chunks_on_page_raw_size;
   const std::int_fast64_t _page_tile_size;
-  boost::compute::detail::lru_cache<std::int_fast64_t, PageBuffer> _page_cache;
+  LRU<std::int64_t, PageBuffer, 20> _page_cache;
 
   auto chunks_available(std::int_fast64_t file_size) noexcept
       -> std::int_fast64_t;

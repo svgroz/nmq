@@ -3,7 +3,6 @@
 #include <limits>
 #include <memory>
 
-#include <boost/compute/detail/lru_cache.hpp>
 #include <spdlog/spdlog.h>
 
 #include <nmq/core/buffer.h>
@@ -22,11 +21,7 @@ IndexLog::IndexLog(std::string &filename, std::int_fast64_t page_size)
                            std::fstream::binary | std::fstream::app),
       _page_size(page_size), _chunks_on_page(_page_size / CHUNK_SIZE),
       _chunks_on_page_raw_size(_chunks_on_page * CHUNK_SIZE),
-      _page_tile_size(_page_size - _chunks_on_page_raw_size),
-      _page_cache(
-          std::lrint(std::log(std::numeric_limits<message_offset_t>::max() /
-                              _page_size)) +
-          1) {
+      _page_tile_size(_page_size - _chunks_on_page_raw_size) {
 
   if (_file.good()) {
     spdlog::info("file is opened: {}", _filename);
@@ -74,7 +69,8 @@ auto IndexLog::load_page_buffer(std::int_fast64_t page_index,
                                         : file_size - current_page_start;
   const std::int_fast64_t chunks_to_read = to_read / CHUNK_SIZE;
 
-  boost::optional<PageBuffer> cached_page_buffer = _page_cache.get(page_index);
+  std::optional<PageBuffer> cached_page_buffer = _page_cache.get(page_index);
+
   if (cached_page_buffer.has_value() &&
       cached_page_buffer.value()->context()._chunks_on_page == chunks_to_read) {
     return cached_page_buffer.value();
@@ -93,7 +89,7 @@ auto IndexLog::load_page_buffer(std::int_fast64_t page_index,
   _file.seekg(current_page_start);
   _file.read(buffer->data(), to_read);
 
-  _page_cache.insert(page_index, buffer);
+  auto is_new = _page_cache.insert(page_index, buffer);
 
   return buffer;
 }

@@ -13,6 +13,7 @@ add_executable(
     test_core
     src/nmq/core/index_log.cpp
     #src/nmq/core/key_value.cpp
+    src/nmq/core/lru.cpp
     #src/nmq/core/message.cpp
     #src/nmq/core/partition_log.cpp
 )
