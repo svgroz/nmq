@@ -16,9 +16,7 @@
 namespace nmq {
 
 template <class Key>
-concept ComparableKey = requires(Key a, Key b) {
-  { a < b } -> std::convertible_to<bool>;
-};
+concept ComparableKey = std::copyable<Key>;
 
 template <ComparableKey K, typename V, std::int_fast64_t size> class LRU {
 private:

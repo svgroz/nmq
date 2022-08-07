@@ -1,10 +1,15 @@
 #pragma once
 
+#include <algorithm>
+#include <concepts>
 #include <memory>
 
 namespace nmq {
 
-template <typename T> class Buffer final {
+template <typename T>
+concept MovalbleKey = std::movable<T>;
+
+template <MovalbleKey T> class Buffer final {
 private:
   char *_data;
   const std::size_t _size;
@@ -17,7 +22,7 @@ public:
   Buffer(Buffer &&source) noexcept {
     _data = source._data;
     source._data = nullptr;
-    _context = source._context;
+    _context = std::move(source._context);
   };
   virtual ~Buffer() {
     if (_data) {
