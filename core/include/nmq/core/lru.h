@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <concepts>
+#include <cstdint>
 #include <iterator>
 #include <limits>
 #include <memory>
@@ -25,7 +26,6 @@ private:
     std::int_fast64_t id = std::numeric_limits<std::int_fast64_t>::min();
     K key;
     V value;
-    bool has_value = false;
   };
 
   std::array<Context, size> cache;
@@ -40,7 +40,7 @@ public:
     for (std::size_t i = 0; i < current_size; i++) {
       Context &c = cache[i];
 
-      if (c.has_value && c.key == key) {
+      if (c.key == key) {
         return std::make_optional(c.value);
       }
     }
@@ -50,16 +50,14 @@ public:
 
   auto insert(const K key, V value) -> bool {
     std::int_fast64_t current_seq_id = ++seq;
-    std::int_fast64_t min_id = current_seq_id;
+    std::int_fast64_t min_id = std::numeric_limits<std::int_fast64_t>::max();
     std::int_fast64_t min_index = 0;
 
-    for (std::int_fast64_t i = 0; i < size; i++) {
+    for (std::int_fast64_t i = 0; i < current_size; i++) {
       Context &c = cache[i];
-      if (c.has_value && c.key == key) {
-        cache[i] = {.id = current_seq_id,
-                    .key = key,
-                    .value = value,
-                    .has_value = true};
+      if (c.key == key) {
+        c.id = current_seq_id;
+        c.value = value;
         return true;
       }
 
@@ -69,12 +67,11 @@ public:
       }
     }
 
-    if (!cache[min_index].has_value) {
-      current_size = current_size + 1;
+    if (current_size < size) {
+      min_index = current_size++;
     }
 
-    cache[min_index] = {
-        .id = current_seq_id, .key = key, .value = value, .has_value = true};
+    cache[min_index] = {.id = current_seq_id, .key = key, .value = value};
 
     return false;
   }
